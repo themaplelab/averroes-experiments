@@ -5,16 +5,16 @@ import java.util.zip.GZIPOutputStream;
 
 import probe.CallGraph;
 import probe.TextWriter;
+import averroes.properties.AverroesProperties;
+import averroes.util.TimeUtils;
 import ca.uwaterloo.averroes.callgraph.CallGraphFactory;
-import ca.uwaterloo.averroes.properties.AverroesProperties;
+import ca.uwaterloo.averroes.util.FileUtils;
 import ca.uwaterloo.averroes.util.ProbeUtils;
-import ca.uwaterloo.averroes.util.TimeUtils;
-import ca.uwaterloo.averroes.util.io.FileUtils;
 
 /**
  * A driver class that generates a call graph for the given tool.
  * 
- * @author karim
+ * @author Karim Ali
  * 
  */
 public class CallGraphGenerator {
@@ -64,7 +64,8 @@ public class CallGraphGenerator {
 
 	private static void usage() {
 		System.out.println("");
-		System.out.println("Usage: java -jar tool.jar <absolute_path_to_doop_home> <tool_name> <base> <benchmark> <isAverroes>");
+		System.out
+				.println("Usage: java -jar tool.jar <absolute_path_to_doop_home> <tool_name> <base> <benchmark> <isAverroes>");
 		System.out.println("");
 		System.exit(1);
 	}

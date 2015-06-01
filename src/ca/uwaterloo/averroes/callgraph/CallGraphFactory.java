@@ -7,17 +7,13 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import probe.CallGraph;
-import ca.uwaterloo.averroes.callgraph.transformers.AndroidCallGraphTransformer;
-import ca.uwaterloo.averroes.callgraph.transformers.AndroidWithAverroesCallGraphTransformer;
+import averroes.properties.AverroesProperties;
+import averroes.util.TimeUtils;
 import ca.uwaterloo.averroes.callgraph.transformers.SparkCallGraphTransformer;
-import ca.uwaterloo.averroes.properties.AverroesProperties;
 import ca.uwaterloo.averroes.util.CommandExecuter;
+import ca.uwaterloo.averroes.util.FileUtils;
 import ca.uwaterloo.averroes.util.ProbeUtils;
-import ca.uwaterloo.averroes.util.TimeUtils;
-import ca.uwaterloo.averroes.util.io.FileUtils;
 
 import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
@@ -223,29 +219,4 @@ public class CallGraphFactory {
 		};
 
 	}
-
-	/**
-	 * Generate the call graph for an Android apk.
-	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws XmlPullParserException
-	 */
-	public static probe.CallGraph generateAndroidCallGraph() throws IOException, XmlPullParserException {
-		probe.CallGraph android = new AndroidCallGraphTransformer().run();
-		return ProbeUtils.collapse(android);
-	}
-
-	/**
-	 * Generate the call graph for an Android apk using the Averroes placeholder
-	 * library.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public static probe.CallGraph generateAndroidWithAverroesCallGraph(String benchmark) throws IOException {
-		probe.CallGraph android = AndroidWithAverroesCallGraphTransformer.run(benchmark);
-		return ProbeUtils.collapse(android);
-	}
-
 }

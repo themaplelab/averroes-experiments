@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import averroes.util.MathUtils;
 import ca.uwaterloo.averroes.util.ArrayUtils;
-import ca.uwaterloo.averroes.util.MathUtils;
-import ca.uwaterloo.averroes.util.io.FileUtils;
+import ca.uwaterloo.averroes.util.FileUtils;
 
 public class AverroesStatisticsGenerator {
 

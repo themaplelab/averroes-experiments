@@ -2,7 +2,7 @@ package ca.uwaterloo.averroes.stats;
 
 import java.util.ArrayList;
 
-import ca.uwaterloo.averroes.util.MathUtils;
+import averroes.util.MathUtils;
 
 public class DiskUsage {
 

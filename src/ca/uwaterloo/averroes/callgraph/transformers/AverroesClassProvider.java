@@ -17,9 +17,9 @@ import soot.ClassProvider;
 import soot.ClassSource;
 import soot.CoffiClassSource;
 import soot.coffi.ClassFile;
-import ca.uwaterloo.averroes.util.io.FileUtils;
-import ca.uwaterloo.averroes.util.io.Resource;
-import ca.uwaterloo.averroes.util.io.ZipEntryResource;
+import averroes.util.io.Resource;
+import averroes.util.io.ZipEntryResource;
+import ca.uwaterloo.averroes.util.FileUtils;
 
 /**
  * This class provider adds the Java classes from the application JAR to the

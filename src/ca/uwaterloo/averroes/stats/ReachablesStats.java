@@ -7,13 +7,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import probe.GXLReader;
 import probe.ProbeMethod;
 import ca.uwaterloo.averroes.callgraph.CallGraph;
 import ca.uwaterloo.averroes.callgraph.CallGraphSource;
-import ca.uwaterloo.averroes.callgraph.gxl.GXLReader;
 import ca.uwaterloo.averroes.util.ArrayUtils;
+import ca.uwaterloo.averroes.util.FileUtils;
 import ca.uwaterloo.averroes.util.SetUtils;
-import ca.uwaterloo.averroes.util.io.FileUtils;
 
 public class ReachablesStats {
 

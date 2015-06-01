@@ -2,11 +2,11 @@ package ca.uwaterloo.averroes.stats;
 
 import java.io.FileInputStream;
 
+import probe.GXLReader;
+import averroes.properties.AverroesProperties;
 import ca.uwaterloo.averroes.callgraph.CallGraph;
 import ca.uwaterloo.averroes.callgraph.CallGraphSource;
-import ca.uwaterloo.averroes.callgraph.gxl.GXLReader;
-import ca.uwaterloo.averroes.properties.AverroesProperties;
-import ca.uwaterloo.averroes.util.io.FileUtils;
+import ca.uwaterloo.averroes.util.FileUtils;
 
 public class StatisticsGenerator {
 

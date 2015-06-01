@@ -5,8 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import ca.uwaterloo.averroes.properties.AverroesProperties;
-import ca.uwaterloo.averroes.util.io.FileUtils;
+import averroes.properties.AverroesProperties;
 
 public class CommandExecuter {
 

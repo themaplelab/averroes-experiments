@@ -5,11 +5,11 @@ import java.util.zip.GZIPOutputStream;
 
 import probe.CallGraph;
 import probe.TextWriter;
+import averroes.properties.AverroesProperties;
+import averroes.util.TimeUtils;
 import ca.uwaterloo.averroes.callgraph.CallGraphFactory;
-import ca.uwaterloo.averroes.properties.AverroesProperties;
+import ca.uwaterloo.averroes.util.FileUtils;
 import ca.uwaterloo.averroes.util.ProbeUtils;
-import ca.uwaterloo.averroes.util.TimeUtils;
-import ca.uwaterloo.averroes.util.io.FileUtils;
 
 /**
  * A driver class that generates call graph for WALA.

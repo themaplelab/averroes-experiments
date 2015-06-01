@@ -16,15 +16,15 @@ import org.deri.iris.storage.IRelation;
 
 import probe.CallEdge;
 import probe.CallGraph;
+import probe.GXLReader;
 import probe.ObjectManager;
 import probe.ProbeClass;
 import probe.ProbeMethod;
 import probe.TextWriter;
 import soot.SootMethod;
+import averroes.properties.AverroesProperties;
+import averroes.soot.Names;
 import ca.uwaterloo.averroes.callgraph.CallGraphSource;
-import ca.uwaterloo.averroes.callgraph.gxl.GXLReader;
-import ca.uwaterloo.averroes.properties.AverroesProperties;
-import ca.uwaterloo.averroes.soot.Names;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -67,8 +67,8 @@ public class ProbeUtils {
 			ProbeMethod src = createProbeMethodBySignature(srcName);
 			ProbeMethod dst = createProbeMethodBySignature(dstName);
 
-			boolean isSrcApp = AverroesProperties.isApplicationMethod(src);
-			boolean isDstApp = AverroesProperties.isApplicationMethod(dst);
+			boolean isSrcApp = isApplicationMethod(src);
+			boolean isDstApp = isApplicationMethod(dst);
 
 			if (isSrcApp && isDstApp) {
 				probe.edges().add(new CallEdge(src, dst));
@@ -224,8 +224,8 @@ public class ProbeUtils {
 			 * /ProtectionDomain;)
 			 */
 			if (!isClinit(dst) && !isLoadClassInternal(dst) && !isCheckPackageAccess(dst)) {
-				boolean isSrcApp = AverroesProperties.isApplicationMethod(src);
-				boolean isDstApp = AverroesProperties.isApplicationMethod(dst);
+				boolean isSrcApp = isApplicationMethod(src);
+				boolean isDstApp = isApplicationMethod(dst);
 
 				if (isSrcApp && isDstApp) {
 					result.edges().add(edge);
@@ -465,6 +465,16 @@ public class ProbeUtils {
 		return method.toString().equalsIgnoreCase(
 				"java.lang.ClassLoader: checkPackageAccess(Ljava/lang/Class;Ljava/security/ProtectionDomain;)");
 	}
+	
+	/**
+	 * Check if a method is an application method (i.e., contained in an application class).
+	 * 
+	 * @param probeMethod
+	 * @return
+	 */
+	public static boolean isApplicationMethod(ProbeMethod probeMethod) {
+		return AverroesProperties.isApplicationClass(probeMethod.cls());
+	}
 
 	public static void main(String[] args) {
 		try {
@@ -474,10 +484,8 @@ public class ProbeUtils {
 			new TextWriter().write(probe,
 					new GZIPOutputStream(new FileOutputStream(args[0].replace(".gxl", ".txt.gzip"))));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
