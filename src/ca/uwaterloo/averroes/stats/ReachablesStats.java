@@ -7,10 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import probe.GXLReader;
+import probe.CallGraph;
 import probe.ProbeMethod;
-import ca.uwaterloo.averroes.callgraph.CallGraph;
-import ca.uwaterloo.averroes.callgraph.CallGraphSource;
+import probe.TextReader;
 import ca.uwaterloo.averroes.util.ArrayUtils;
 import ca.uwaterloo.averroes.util.FileUtils;
 import ca.uwaterloo.averroes.util.SetUtils;
@@ -38,18 +37,16 @@ public class ReachablesStats {
 
 			for (String benchmark : benchmarks) {
 				String dir = FileUtils.composePath(basedir, benchmark);
-				String cgNoReflection = FileUtils.composePath(dir, "sparkAverroes.gxl");
+				String cgNoReflection = FileUtils.composePath(dir, "sparkAverroes.txt.gzip");
 				String cgReflection = FileUtils.composePath(dir.replace("may06-no", "april11-with"),
-						"sparkAverroes.gxl");
-				String cgDynamic = FileUtils.composePath("callgraphs", "dynamic-call-graphs", benchmark, "dynamic.gxl");
+						"sparkAverroes.txt.gzip");
+				String cgDynamic = FileUtils.composePath("callgraphs", "dynamic-call-graphs", benchmark,
+						"dynamic.txt.gzip");
 
 				// The averroes files
-				CallGraph sparkNoReflection = new GXLReader().readCallGraph(new FileInputStream(cgNoReflection),
-						CallGraphSource.SPARK_AVERROES);
-				CallGraph sparkReflection = new GXLReader().readCallGraph(new FileInputStream(cgReflection),
-						CallGraphSource.SPARK_AVERROES);
-				CallGraph dynamic = new GXLReader().readCallGraph(new FileInputStream(cgDynamic),
-						CallGraphSource.DYNAMIC);
+				CallGraph sparkNoReflection = new TextReader().readCallGraph(new FileInputStream(cgNoReflection));
+				CallGraph sparkReflection = new TextReader().readCallGraph(new FileInputStream(cgReflection));
+				CallGraph dynamic = new TextReader().readCallGraph(new FileInputStream(cgDynamic));
 
 				Set<ProbeMethod> reachablesDynamic = dynamic.findReachables();
 				Set<ProbeMethod> reachablesWithReflection = sparkReflection.findReachables();
@@ -61,8 +58,7 @@ public class ReachablesStats {
 
 				reachablesComp.dyn_SparkAverroes().add(
 						SetUtils.minus(reachablesDynamic, reachablesWithReflection).size());
-				reachablesComp.dynSpark().add(
-						SetUtils.minus(reachablesDynamic, reachablesNoReflection).size());
+				reachablesComp.dynSpark().add(SetUtils.minus(reachablesDynamic, reachablesNoReflection).size());
 			}
 
 			System.out.format("                    " + getFormat(), ArrayUtils.concat(dacapo, specjvm).toArray());
@@ -74,7 +70,7 @@ public class ReachablesStats {
 			System.out.format("SparkAveNR          " + getFormat(), reachables.spark().toArray());
 			System.out.println("");
 			System.out.println("");
-			
+
 			System.out.println("Reachables Comps");
 			System.out.println("-------------------");
 			System.out.format("Dyn - SparkAve      " + getFormat(), reachablesComp.dyn_SparkAverroes().toArray());

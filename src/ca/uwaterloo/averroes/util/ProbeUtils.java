@@ -2,29 +2,23 @@ package ca.uwaterloo.averroes.util;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 
 import org.apache.bcel.classfile.Utility;
 import org.deri.iris.storage.IRelation;
 
 import probe.CallEdge;
 import probe.CallGraph;
-import probe.GXLReader;
 import probe.ObjectManager;
 import probe.ProbeClass;
 import probe.ProbeMethod;
-import probe.TextWriter;
 import soot.SootMethod;
 import averroes.properties.AverroesProperties;
 import averroes.soot.Names;
-import ca.uwaterloo.averroes.callgraph.CallGraphSource;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -476,17 +470,17 @@ public class ProbeUtils {
 		return AverroesProperties.isApplicationClass(probeMethod.cls());
 	}
 
-	public static void main(String[] args) {
-		try {
-			ca.uwaterloo.averroes.callgraph.CallGraph aveCallGraph = new GXLReader().readCallGraph(new FileInputStream(
-					args[0]), CallGraphSource.DUMMY);
-			CallGraph probe = collapse(aveCallGraph);
-			new TextWriter().write(probe,
-					new GZIPOutputStream(new FileOutputStream(args[0].replace(".gxl", ".txt.gzip"))));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			ca.uwaterloo.averroes.callgraph.CallGraph aveCallGraph = new GXLReader().readCallGraph(new FileInputStream(
+//					args[0]), CallGraphSource.DUMMY);
+//			CallGraph probe = collapse(aveCallGraph);
+//			new TextWriter().write(probe,
+//					new GZIPOutputStream(new FileOutputStream(args[0].replace(".gxl", ".txt.gzip"))));
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 }
