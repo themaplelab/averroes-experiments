@@ -1,0 +1,47 @@
+#! /usr/bin/env bash
+
+set -e
+
+base=$3
+benchmark=$4
+
+##################################################################
+if test "$2" = "-averroes"; then
+  averroes=true
+  toolname=${tool}-averroes
+else
+  averroes=false
+  toolname=${tool}
+fi
+
+program=$(basename $benchmark)
+outputdir=${base}/callgraphs/${benchmark}
+doopHome=/u/karim/workspace/doop
+##################################################################
+
+  
+# 1. make some dirs
+mkdir -p ${outputdir}/
+
+# 2. update properties file
+cp properties/${benchmark}.properties averroes.properties
+jar uf tool.jar averroes.properties
+
+# 3. run tool
+echo "running ${toolname} for ${benchmark}"
+  
+java -verbose:gc -Xloggc:${outputdir}/${toolname}-gc.log -jar tool.jar ${doopHome} ${tool} ${base} ${benchmark} ${averroes}
+cp output/callgraph.txt.gzip ${outputdir}/${toolname}.txt.gzip
+  
+# 4. Do some extra stuff for doop
+if test "${tool}" = "doop"; then
+  # copy database
+  echo "making the database of ${toolname} available at ${outputdir}/${toolname}.tar.gz ..."
+  tar -czf ${outputdir}/${toolname}.tar.gz ../doop/last-analysis/*
+  
+  # print disk usage
+  echo -n "Disk usage stats: "
+  du -sh ../doop/cache/analysis
+fi
+
+echo ""

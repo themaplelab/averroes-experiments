@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+
+set -e
+
+base=$1
+benchmark=$2
+outputdir=${base}/callgraphs/${benchmark} 
+  
+# 1. create output directory
+mkdir -p ${outputdir}/
+  
+# 2. run spark
+./run-tool spark -vanilla ${base} ${benchmark} > ${outputdir}/spark.log
+./run-tool spark -averroes ${base} ${benchmark} > ${outputdir}/spark-averroes.log
+
+# 2. run doop
+./run-tool doop -vanilla ${base} ${benchmark} > ${outputdir}/doop.log
+./run-tool doop -averroes ${base} ${benchmark} > ${outputdir}/doop-averroes.log
+
+# 2. run wala
+./run-tool wala -vanilla ${base} ${benchmark} > ${outputdir}/wala.log
+./run-tool wala -averroes ${base} ${benchmark} > ${outputdir}/wala-averroes.log

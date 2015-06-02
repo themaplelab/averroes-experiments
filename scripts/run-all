@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+
+set -e
+
+date
+for i in {1..10}
+do
+  base=all-output/${i}
+  echo "running for the ${i}th time!"
+  echo "running Averroes"
+  ./averroes-all -tfx -dyn ${base}
+  echo "running ${benchmark}"
+  ./run-all-benchmarks ${base}
+  echo " "
+  echo " "
+  echo " "
+  echo " "
+  echo " "
+done
+date
