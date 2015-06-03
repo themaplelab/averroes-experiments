@@ -3,35 +3,27 @@
 set -e
 
 benchmark=$1
-reflection=$2
+base=$2
+tfx=$3
+dyn=$4
 
-function timing()
-{
-	echo "..."
-	/usr/bin/time -f "elapsed time: %es" $* 2>&1
-}
+outputdir=${base}/benchmarks-averroes/${benchmark}
 
-date
-mkdir -p benchmarks-averroes/dacapo
-mkdir -p benchmarks-averroes/specjvm
+# make some dirs
+mkdir -p ${outputdir}
 
 echo "running ${benchmark}"
-program=$(basename $benchmark)
+program=$(basename ${benchmark})
   
 # 1. run Averroes
 cp properties/${benchmark}.properties averroes.properties
 jar uf averroes.jar averroes.properties
-
-if test "$2" = "-disable-reflection"; then
-  timing java -jar averroes.jar $reflection
-else
-  timing java -jar averroes.jar
-fi
+java -jar averroes.jar ${tfx} ${dyn} 
 
 # 2. copy the output JARs
-cp output/organized-app.jar benchmarks-averroes/${benchmark}-organized-app.jar
-cp output/organized-lib.jar benchmarks-averroes/${benchmark}-organized-lib.jar
-cp output/placeholder-lib.jar benchmarks-averroes/${benchmark}-placeholder-lib.jar
-cp output/averroes-lib-class.jar benchmarks-averroes/${benchmark}-averroes-lib-class.jar
+cp output/organized-app.jar ${outputdir}/organized-app.jar
+cp output/organized-lib.jar ${outputdir}/organized-lib.jar
+cp output/placeholder-lib.jar ${outputdir}/placeholder-lib.jar
+cp output/averroes-lib-class.jar ${outputdir}/averroes-lib-class.jar
 
 echo ""

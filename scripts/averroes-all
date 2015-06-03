@@ -1,31 +1,34 @@
 #! /usr/bin/env bash
 
 set -e
-reflection=$1
+
+base=$1
+tfx=$2
+dyn=$3
 
 # the dacapo benchmarks
-dacapo=( antlr bloat chart hsqldb jython luindex lusearch pmd xalan )
+dacapo=( antlr bloat chart hsqldb luindex lusearch pmd xalan )
 dacapo=( "${dacapo[@]/#/dacapo/}" )
 
 # the specjvm benchmarks
-specjvm=( compress db jack javac jess raytrace )
+specjvm=( compress db jack jess raytrace )
 specjvm=( "${specjvm[@]/#/specjvm/}" )
 
 # put them all in one big array
 benchmarks=( ${dacapo[@]} ${specjvm[@]} )
 
-function timing()
-{
-	echo "..."
-	/usr/bin/time -f "elapsed time: %es" $* 2>&1
-}
 
 date
-mkdir -p benchmarks-averroes/dacapo
-mkdir -p benchmarks-averroes/specjvm
-
 for benchmark in ${benchmarks[@]}
 do
-  ./averroes $benchmark $reflection
+  echo "running averroes on ${benchmark} ..."
+  program=$(basename ${benchmark})
+  outputdir=${base}/benchmarks-averroes/${benchmark}
+  
+  # 1. create output directory
+  mkdir -p ${outputdir}
+  
+  # 2. run the script
+  ./averroes ${benchmark} ${base} ${tfx} ${dyn} > ${outputdir}/averroes.log
 done
 date
