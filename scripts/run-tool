@@ -2,6 +2,7 @@
 
 set -e
 
+tool=$1
 base=$3
 benchmark=$4
 
