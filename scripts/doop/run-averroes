@@ -354,10 +354,10 @@ else
   aveclsjar=$( echo $deps | sed 's/placeholder-lib.jar/averroes-lib-class.jar/' )
   depargs="-l $deps -l $aveclsjar"
 
-  dyn="$(dirname $arg)/$(basename $arg .jar).dynamic"
-  if test -e "${dyn}"; then
-	dynamics="${dynamics} ${dyn}"
-  fi
+  #dyn="$(dirname $arg)/$(basename $arg .jar).dynamic"
+  #if test -e "${dyn}"; then
+  #	dynamics="${dynamics} ${dyn}"
+  #fi
 fi
 
 function preprocess()
@@ -427,14 +427,14 @@ function create-database()
     $bloxbatch -db $cachedatabase -execute "+MainClass(x) <- ClassType(x), Type:Value(x:\"$mainclass\")."
     
     #echo "adding averroes library class static initalizer as entry point"
-    #$bloxbatch -db $cachedatabase -execute "+InitializedClass(class) <- ClassType(class), Type:Value(class:\"ca.uwaterloo.averroes.Library\")."
-    #$bloxbatch -db $cachedatabase -execute "+ReachableContext(?clinit) <- InitializedClass(class), ClassInitializer[class] = ?clinit, Type:Value(class:\"ca.uwaterloo.averroes.Library\")."
+    #$bloxbatch -db $cachedatabase -execute "+InitializedClass(class) <- ClassType(class), Type:Value(class:\"averroes.Library\")."
+    #$bloxbatch -db $cachedatabase -execute "+ReachableContext(?clinit) <- InitializedClass(class), ClassInitializer[class] = ?clinit, Type:Value(class:\"averroes.Library\")."
     #/**
     # * The Averroes library class is always initialized
     # */
     #InitializedClass(?averroes) <-
     #  ClassType(?averroes),
-    #  Type:Value(?averroes:"ca.uwaterloo.averroes.Library").
+    #  Type:Value(?averroes:"averroes.Library").
   fi
 
   mkdir -p $(dirname $database)

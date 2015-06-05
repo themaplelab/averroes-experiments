@@ -351,11 +351,11 @@ else
   jars="$arg"
   depargs="-l $deps"
 
-  if test "$arg" = "benchmarks-averroes/dacapo/hsqldb-organized-app.jar"; then
+  if test "$arg" = "*/benchmarks-averroes/dacapo/hsqldb/organized-app.jar"; then
     dyn="benchmarks/dacapo/hsqldb.dynamic"
     echo "adding dynamic file ${dyn}"
     dynamics="${dynamics} ${dyn}"
-  elif test "$arg" = "benchmarks-averroes/dacapo/antlr-organized-app.jar"; then
+  elif test "$arg" = "*/benchmarks-averroes/dacapo/antlr/organized-app.jar"; then
     dyn="benchmarks/dacapo/antlr.dynamic"
     echo "adding dynamic file ${dyn}"
     dynamics="${dynamics} ${dyn}"
