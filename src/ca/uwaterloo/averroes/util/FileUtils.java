@@ -30,17 +30,25 @@ public class FileUtils extends averroes.util.io.FileUtils {
 	 * @return
 	 */
 	public static String organizedApplicationJarFile(String base, String benchmark) {
-		return composePath(base, "benchmarks-averroes", benchmark + "-organized-app.jar");
+		return composePath(base, "benchmarks-averroes", benchmark, "organized-app.jar");
+	}
+	
+	/**
+	 * The path to the placeholder library JAR file of a benchmark.
+	 * 
+	 * @return
+	 */
+	public static String placeholderLibraryJarFile(String base, String benchmark) {
+		return composePath(base, "benchmarks-averroes", benchmark, "placeholder-lib.jar");
 	}
 
 	/**
-	 * The path to the JAR file that contains the single file
-	 * ca.uwaterloo.averroes.Library
+	 * The path to the JAR file that contains the single file averroes.Library
 	 * 
 	 * @return
 	 */
 	public static String averroesLibraryClassJarFile(String base, String benchmark) {
-		return composePath(base, "benchmarks-averroes", benchmark + "-averroes-lib-class.jar");
+		return composePath(base, "benchmarks-averroes", benchmark, "averroes-lib-class.jar");
 	}
 	
 	/**
@@ -49,7 +57,7 @@ public class FileUtils extends averroes.util.io.FileUtils {
 	 * @return
 	 */
 	public static String organizedLibraryJarFile(String base, String benchmark) {
-		return composePath(base, "benchmarks-averroes", benchmark + "-organized-lib.jar");
+		return composePath(base, "benchmarks-averroes", benchmark, "organized-lib.jar");
 	}
 	
 	/**

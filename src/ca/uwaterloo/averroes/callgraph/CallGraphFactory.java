@@ -206,7 +206,7 @@ public class CallGraphFactory {
 						} else if (isAve && !clinitTaken) {
 							clinitTaken = true;
 							TypeReference T = TypeReference.findOrCreate(loaderRef,
-									TypeName.string2TypeName("Lca/uwaterloo/averroes/Library"));
+									TypeName.string2TypeName("Laverroes/Library"));
 							MethodReference clinitRef = MethodReference.findOrCreate(T, MethodReference.clinitName,
 									MethodReference.clinitSelector.getDescriptor());
 							return new DefaultEntrypoint(clinitRef, cha);
