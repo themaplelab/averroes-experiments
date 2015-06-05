@@ -338,12 +338,14 @@ if test -d $arg; then
   echo "sorry, directories are currently not supported"
   exit 1
 else
-  if test $(basename $(dirname $arg)) = "dacapo"; then
+  if [[ $arg == *"/dacapo/"* ]]
+  then
     echo "running dacapo benchmark $benchmark"
     if test "x$mainclass" = "x"; then
       mainclass="dacapo.$benchmark.Main2"
     fi
-  elif test $(basename $(dirname $arg)) = "specjvm"; then
+  elif [[ $arg == *"/specjvm/"* ]]
+  then
     echo "running specjvm benchmark $benchmark"
     if test "x$mainclass" = "x"; then
       mainclass="spec.benchamrks.$benchmark.Main"
