@@ -9,7 +9,6 @@ do
   echo "running for the ${i}th time!"
   echo "running Averroes"
   ./averroes-all ${base} -tfx -dyn
-  echo "running ${benchmark}"
   ./run-all-benchmarks ${base}
   echo " "
   echo " "
