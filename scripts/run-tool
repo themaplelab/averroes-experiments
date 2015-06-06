@@ -20,6 +20,11 @@ outputdir=${base}/callgraphs/${benchmark}
 doopHome=/u/karim/workspace/doop
 ##################################################################
 
+function monitormemory()
+{
+	echo "..."
+	/usr/bin/time -f "maximum resident set size: %M" $* 2>&1
+}
   
 # 1. make some dirs
 mkdir -p ${outputdir}/
@@ -31,7 +36,7 @@ jar uf tool.jar averroes.properties
 # 3. run tool
 echo "running ${toolname} for ${benchmark}"
   
-java -verbose:gc -Xloggc:${outputdir}/${toolname}-gc.log -jar tool.jar ${doopHome} ${tool} ${base} ${benchmark} ${averroes}
+monitormemory java -verbose:gc -Xloggc:${outputdir}/${toolname}-gc.log -jar tool.jar ${doopHome} ${tool} ${base} ${benchmark} ${averroes}
 cp output/callgraph.txt.gzip ${outputdir}/${toolname}.txt.gzip
   
 # 4. Do some extra stuff for doop
