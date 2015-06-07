@@ -45,9 +45,8 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val cg = if (isAve) "doop-averroes-call-graphs" else "doop-call-graphs"
-      val stats = if (isAve) s"$prog-doopAverroes.stats" else s"$prog-doop.stats"
-      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$cg/$benchmark/$stats").getLines.toList
+      val tool = if (isAve) s"doop-averroes" else s"doop"
+      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
 
       val analysis = doopExtractNumber(_ startsWith "MBBENCH logicblox START", log)
 
@@ -70,9 +69,8 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val cg = if (isAve) "doop-averroes-call-graphs" else "doop-call-graphs"
-      val stats = if (isAve) s"$prog-doopAverroes.stats" else s"$prog-doop.stats"
-      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$cg/$benchmark/$stats").getLines.toList
+      val tool = if (isAve) s"doop-averroes" else s"doop"
+      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
 
       var total = 0d
 
@@ -103,7 +101,7 @@ object ErrorBarsGenerator {
   }
 
   def emitAnalysisTime(tool: String, isAve: Boolean) = {
-    val title = if (isAve) s"${tool}Ave Memory" else s"${tool} Memory"
+    val title = if (isAve) s"${tool}Ave Analysis Time" else s"${tool} Analysis Time"
     val filename = if (isAve) s"${tool.toLowerCase}-averroes" else s"${tool.toLowerCase}"
 
     println(title)
@@ -124,7 +122,7 @@ object ErrorBarsGenerator {
   }
 
   def emitOverheadTime(tool: String, isAve: Boolean) = {
-    val title = if (isAve) s"${tool}Ave Memory" else s"${tool} Memory"
+    val title = if (isAve) s"${tool}Ave Overhead Time" else s"${tool} Overhead Time"
     val filename = if (isAve) s"${tool.toLowerCase}-averroes" else s"${tool.toLowerCase}"
 
     println(title)
@@ -162,11 +160,10 @@ object ErrorBarsGenerator {
       benchmark = benchmarkFull(prog)
     } {
       // This is divided by 4 due to a known bug in how the /usr/bin/time command computes the resident memory 
-      val memory = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$filename.log").
-        getLines.toList.find(_ startsWith "maximum resident set size: ").
-        get.split(":").last.trim.toLong / 4
+      var memory = Math.kb2gb(io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$filename.log").
+        getLines.toList.find(_ startsWith "maximum resident set size: ").get.split(":").last.trim.toLong / 4)
 
-      if (prog != benchmarks.last) print(Math.kb2mb(memory) + "\t")
+      if (prog != benchmarks.last) print(memory + "\t")
       else print(memory + "\n")
     }
 
@@ -185,7 +182,7 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val log = io.Source.fromFile(s"all-output/$iteration/benchmarks-averroes/averroes.log").getLines.toList
+      val log = io.Source.fromFile(s"all-output/$iteration/benchmarks-averroes/$benchmark/averroes.log").getLines.toList
       val line = log.find(_ startsWith "Total time (without verification)").get
       val averroes = Math.round(extractNumber(line))
 
