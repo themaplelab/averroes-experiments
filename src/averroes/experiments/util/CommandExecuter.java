@@ -1,4 +1,4 @@
-package ca.uwaterloo.averroes.util;
+package averroes.experiments.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

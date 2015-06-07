@@ -1,4 +1,4 @@
-package ca.uwaterloo.averroes.util;
+package averroes.experiments.util;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -167,26 +167,6 @@ public class ProbeUtils {
 		dynamicEdgesFile.close();
 
 		return probecg;
-	}
-	
-	/**
-	 * Convert from the Averroes probe format to the standard probe format.
-	 * 
-	 * @param aveCallGraph
-	 * @return
-	 */
-	public static CallGraph collapse(ca.uwaterloo.averroes.callgraph.CallGraph aveCallGraph) {
-		CallGraph result = new CallGraph();
-
-		// Add the entry points
-		aveCallGraph.entryPoints().forEach(entry -> result.entryPoints().add(entry));
-
-		// Add the edges appropriately
-		aveCallGraph.appToAppEdges().forEach(edge -> result.edges().add(edge));
-		aveCallGraph.appToLibEdges().forEach(src -> result.edges().add(new CallEdge(src, LIBRARY_BLOB)));
-		aveCallGraph.libToAppEdges().forEach(dst -> result.edges().add(new CallEdge(LIBRARY_BLOB, dst)));
-
-		return result;
 	}
 
 	/**
@@ -459,9 +439,10 @@ public class ProbeUtils {
 		return method.toString().equalsIgnoreCase(
 				"java.lang.ClassLoader: checkPackageAccess(Ljava/lang/Class;Ljava/security/ProtectionDomain;)");
 	}
-	
+
 	/**
-	 * Check if a method is an application method (i.e., contained in an application class).
+	 * Check if a method is an application method (i.e., contained in an
+	 * application class).
 	 * 
 	 * @param probeMethod
 	 * @return
@@ -470,17 +451,19 @@ public class ProbeUtils {
 		return AverroesProperties.isApplicationClass(probeMethod.cls());
 	}
 
-//	public static void main(String[] args) {
-//		try {
-//			ca.uwaterloo.averroes.callgraph.CallGraph aveCallGraph = new GXLReader().readCallGraph(new FileInputStream(
-//					args[0]), CallGraphSource.DUMMY);
-//			CallGraph probe = collapse(aveCallGraph);
-//			new TextWriter().write(probe,
-//					new GZIPOutputStream(new FileOutputStream(args[0].replace(".gxl", ".txt.gzip"))));
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	// public static void main(String[] args) {
+	// try {
+	// ca.uwaterloo.averroes.callgraph.CallGraph aveCallGraph = new
+	// GXLReader().readCallGraph(new FileInputStream(
+	// args[0]), CallGraphSource.DUMMY);
+	// CallGraph probe = collapse(aveCallGraph);
+	// new TextWriter().write(probe,
+	// new GZIPOutputStream(new FileOutputStream(args[0].replace(".gxl",
+	// ".txt.gzip"))));
+	// } catch (FileNotFoundException e) {
+	// e.printStackTrace();
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
 }

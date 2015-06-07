@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="errorbars">
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+
+	<!-- Scala properties -->
+	<property name="scala.home" value="/Applications/eclipse/plugins" />
+	<property name="scala-library.jar" value="${scala.home}/org.scala-lang.scala-library_2.11.6.v20150224-172222-092690e7bf.jar" />
+	<property name="scala-reflect.jar" value="${scala.home}/org.scala-lang.scala-reflect_2.11.6.v20150224-172222-092690e7bf" />
+
+	<target name="create_run_jar">
+		<delete file="errorbars.jar" />
+		<jar destfile="errorbars.jar">
+			<manifest>
+				<attribute name="Main-Class" value="averroes.experiments.stats.ErrorBarsGenerator" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="../bin/" />
+			<zipgroupfileset file="${scala-library.jar}" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+			<zipgroupfileset file="${scala-reflect.jar}" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+		</jar>
+		<exec executable="zip">
+			<arg value="-d" />
+			<arg value="errorbars.jar" />
+			<arg value="*.RSA" />
+			<arg value="*.SF" />
+			<arg value="*.DSA" />
+		</exec>
+	</target>
+</project>

@@ -1,15 +1,14 @@
-package ca.uwaterloo.averroes.callgraph.drivers;
+package averroes.experiments;
 
 import java.io.FileOutputStream;
 import java.util.zip.GZIPOutputStream;
 
 import probe.CallGraph;
 import probe.TextWriter;
+import averroes.experiments.util.FileUtils;
+import averroes.experiments.util.ProbeUtils;
 import averroes.properties.AverroesProperties;
 import averroes.util.TimeUtils;
-import ca.uwaterloo.averroes.callgraph.CallGraphFactory;
-import ca.uwaterloo.averroes.util.FileUtils;
-import ca.uwaterloo.averroes.util.ProbeUtils;
 
 /**
  * A driver class that generates a call graph for the given tool.

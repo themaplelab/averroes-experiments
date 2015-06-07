@@ -1,4 +1,4 @@
-package ca.uwaterloo.averroes.callgraph;
+package averroes.experiments;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,12 +8,12 @@ import java.util.Iterator;
 import java.util.jar.JarFile;
 
 import probe.CallGraph;
+import averroes.experiments.soot.SparkCallGraphTransformer;
+import averroes.experiments.util.CommandExecuter;
+import averroes.experiments.util.FileUtils;
+import averroes.experiments.util.ProbeUtils;
 import averroes.properties.AverroesProperties;
 import averroes.util.TimeUtils;
-import ca.uwaterloo.averroes.callgraph.transformers.SparkCallGraphTransformer;
-import ca.uwaterloo.averroes.util.CommandExecuter;
-import ca.uwaterloo.averroes.util.FileUtils;
-import ca.uwaterloo.averroes.util.ProbeUtils;
 
 import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;

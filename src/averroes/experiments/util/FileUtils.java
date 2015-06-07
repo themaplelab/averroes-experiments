@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ca.uwaterloo.averroes.util;
+package averroes.experiments.util;
 
 import java.io.File;
 

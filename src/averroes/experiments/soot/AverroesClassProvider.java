@@ -1,4 +1,4 @@
-package ca.uwaterloo.averroes.callgraph.transformers;
+package averroes.experiments.soot;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,9 +17,9 @@ import soot.ClassProvider;
 import soot.ClassSource;
 import soot.CoffiClassSource;
 import soot.coffi.ClassFile;
+import averroes.experiments.util.FileUtils;
 import averroes.util.io.Resource;
 import averroes.util.io.ZipEntryResource;
-import ca.uwaterloo.averroes.util.FileUtils;
 
 /**
  * This class provider adds the Java classes from the application JAR to the
