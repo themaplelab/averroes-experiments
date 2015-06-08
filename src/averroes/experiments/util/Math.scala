@@ -23,5 +23,6 @@ object Math {
   }
   
   // Convert memory from Kb to Mb
-  def kb2mb(size: Long) = round(size / 1024d / 1024d)
+  def kb2gb(size: Long) = round(size / 1024d / 1024d)
+  def kb2mb(size: Long) = round(size / 1024d)
 }
