@@ -116,6 +116,7 @@ public class ProbeUtils {
 
 				while (successors.hasNext()) {
 					CGNode succ = successors.next();
+					// System.out.println(node + " ===> " + succ);
 					// if(node.getMethod().getName().toString().equals("doItAll"))
 					// {
 					// System.out.println(succ);

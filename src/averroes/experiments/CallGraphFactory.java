@@ -99,9 +99,9 @@ public class CallGraphFactory {
 	 * @throws IllegalArgumentException
 	 * @throws InvalidClassFileException
 	 */
-	public static probe.CallGraph generateWalaCallGraph(String base, String benchmark, boolean isAve)
-			throws IOException, InterruptedException, ClassHierarchyException, IllegalArgumentException,
-			CallGraphBuilderCancelException, InvalidClassFileException {
+	public static CallGraph generateWalaCallGraph(String base, String benchmark, boolean isAve) throws IOException,
+			InterruptedException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException,
+			InvalidClassFileException {
 		// 1. build the call graph
 		String classpath = FileUtils.composeClassPath(FileUtils.organizedApplicationJarFile(base, benchmark),
 				FileUtils.organizedLibraryJarFile(base, benchmark));
