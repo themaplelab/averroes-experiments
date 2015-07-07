@@ -1,16 +1,13 @@
 package averroes.experiments.stats
 
-import java.io.FileInputStream
-import java.io.PrintStream
-import java.text.DecimalFormat
-import java.util.zip.GZIPInputStream
 import scala.collection.JavaConversions.asScalaSet
-import probe.TextReader
+
 import averroes.experiments.util.ProbeUtils
+import averroes.soot.Names
 import probe.CallEdge
 import probe.CallGraph
 import probe.ObjectManager
-import averroes.soot.Names
+import probe.TextReader
 import probe.TextWriter
 
 /** upgrade the call graphs to the new library blob format */

@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+#! /usr/bin/env bash
+
+set -e
+
+tool=$1
+base=$3
+benchmark=$4
+
+##################################################################
+if test "$2" = "-averroes"; then
+  averroes=true
+  toolname=${tool}-averroes
+else
+  averroes=false
+  toolname=${tool}
+fi
+
+program=$(basename $benchmark)
+outputdir=${base}/callgraphs/${benchmark}
+cgfile=${toolname}.txt.gzip
+doopHome=/u/karim/workspace/doop
+##################################################################
+
+
+static=callgraphs/${lang}/${benchmark}/static-summary${version}.txt.gzip
+dynamic=callgraphs/${lang}/${benchmark}/dynamic-summary${version}.txt.gzip
+
+# Get info about static call graph
+echo "static call graph info"
+echo "----------------------"
+info=$(java -cp probe.jar probe.CallGraphInfo ${static})
+nodes=$(echo "$info" | grep 'Reachable methods')
+tokens=( $nodes )
+count=${tokens[${#tokens[@]} - 1]}
+echo "nodes static = ${count}"
+
+edges=$(echo "$info" | grep 'Edges')
+tokens=( $edges )
+count=${tokens[${#tokens[@]} - 1]}
+echo "edges static = ${count}"
+
+# Get info about dynamic call graph
+echo
+echo "dynamic call graph info"
+echo "-----------------------"
+info=$(java -cp probe.jar probe.CallGraphInfo ${dynamic})
+nodes=$(echo "$info" | grep 'Reachable methods')
+tokens=( $nodes )
+count=${tokens[${#tokens[@]} - 1]}
+echo "nodes dynamic = ${count}"
+
+edges=$(echo "$info" | grep 'Edges')
+tokens=( $edges )
+count=${tokens[${#tokens[@]} - 1]}
+echo "edges dynamic = ${count}"
+
+# Get soundness info
+echo
+echo "call graph soundness"
+echo "--------------------"
+diff=$(java -cp probe.jar probe.CallGraphDiff -a ${dynamic} ${static})
+nodes=$(echo "$diff" | grep 'Number of reachable methods missing')
+tokens=( $nodes )
+count=${tokens[${#tokens[@]} - 1]}
+echo "nodes unsound = ${count}"
+
+edges=$(echo "$diff" | grep 'Missing call edges')
+tokens=( $edges )
+count=${tokens[${#tokens[@]} - 1]}
+echo "edges unsound = ${count}"
+
+# Get preicison info
+echo
+echo "call graph precision"
+echo "--------------------"
+diff=$(java -cp probe.jar probe.CallGraphDiff -a ${static} ${dynamic})
+nodes=$(echo "$diff" | grep 'Number of reachable methods missing')
+tokens=( $nodes )
+count=${tokens[${#tokens[@]} - 1]}
+echo "nodes imprecise = ${count}"
+
+edges=$(echo "$diff" | grep 'Missing call edges')
+tokens=( $edges )
+count=${tokens[${#tokens[@]} - 1]}
+echo "edges imprecise = ${count}"
+echo
+echo

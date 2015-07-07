@@ -149,6 +149,7 @@ public class CallGraphFactory {
 						| ZeroXInstanceKeys.SMUSH_PRIMITIVE_HOLDERS | ZeroXInstanceKeys.SMUSH_STRINGS
 						| ZeroXInstanceKeys.SMUSH_THROWABLES);
 	}
+	
 
 	public static AnalysisScope makeAverroesAnalysisScope(String base, String benchmark, String exclusions)
 			throws IOException, IllegalArgumentException, InvalidClassFileException {
