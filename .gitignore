@@ -4,3 +4,7 @@
 /hello/
 /jre/
 /properties/
+/output/
+/.cache
+/.cache-main
+/.DS_Store
