@@ -1,6 +1,7 @@
 /bin/
 /benchmarks/
 /benchmarks-averroes/
+/dumps/
 /hello/
 /jre/
 /properties/
@@ -8,3 +9,4 @@
 /.cache
 /.cache-main
 /.DS_Store
+/dumps/

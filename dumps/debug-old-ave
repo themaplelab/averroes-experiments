@@ -1,0 +1,25 @@
+// Those edges have always been there!
+antlr.CharScanner: makeToken(I) ===> antlr.Token: setColumn(I)
+antlr.CharScanner: makeToken(I) ===> antlr.Token: setLine(I)
+antlr.NameSpace: emitDeclarations(Ljava/io/PrintWriter;) ===> antlr.collections.impl.VectorEnumerator: hasMoreElements()
+antlr.NameSpace: emitDeclarations(Ljava/io/PrintWriter;) ===> antlr.collections.impl.VectorEnumerator: nextElement()
+antlr.preprocessor.Hierarchy: verifyThatHierarchyIsComplete() ===> antlr.collections.impl.VectorEnumerator: hasMoreElements()
+antlr.preprocessor.Hierarchy: verifyThatHierarchyIsComplete() ===> antlr.collections.impl.VectorEnumerator: nextElement()
+
+
+// Those no longer show up in the new Averroes implementation because they are objects created through newInstance
+// They do have edges from averroes.Library.blob(), though, which I think is the correct behaviour. 
+// Since now we run SparkAverroes with reflection disabled (only depending on Averroes), those edges no longer appear.
+antlr.CharScanner: makeToken(I) ===> antlr.CommonToken: <init>()
+antlr.Tool: doEverything([Ljava/lang/String;) ===> antlr.CppCodeGenerator: <init>()
+antlr.Tool: doEverything([Ljava/lang/String;) ===> antlr.CSharpCodeGenerator: <init>()
+antlr.Tool: doEverything([Ljava/lang/String;) ===> antlr.JavaCodeGenerator: <init>()
+
+// Those edges are just completely bogus! They should never be there as they are an artifact of extremely imprecise 
+// handling of reflective calls.
+// Since now we run SparkAverroes with reflection disabled (only depending on Averroes), those edges no longer appear.
+antlr.CharScanner: makeToken(I) ===> antlr.CppCodeGenerator: <init>()
+antlr.CharScanner: makeToken(I) ===> antlr.CSharpCodeGenerator: <init>()
+antlr.CharScanner: makeToken(I) ===> antlr.JavaCodeGenerator: <init>()
+antlr.Tool: doEverything([Ljava/lang/String;) ===> antlr.CommonToken: <init>()
+
