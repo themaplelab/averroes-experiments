@@ -84,7 +84,7 @@ public class CallGraphFactory {
 		CommandExecuter.runDoop(doopHome, base, benchmark, isAverroes);
 
 		// 2. Convert the Doop call graph
-		return ProbeUtils.convertDoopCallGraph(doopHome);
+		return ProbeUtils.convertDoopCallGraph(doopHome, isAverroes);
 	}
 
 	/**

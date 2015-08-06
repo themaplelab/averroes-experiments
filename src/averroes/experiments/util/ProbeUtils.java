@@ -41,9 +41,10 @@ public class ProbeUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static CallGraph convertDoopCallGraph(String doopHome) throws IOException {
+	public static CallGraph convertDoopCallGraph(String doopHome, boolean isAverroes) throws IOException {
 		CallGraph probe = new CallGraph();
 		IRelation edges = ResultImporter.getDoopCallGraphEdges(doopHome);
+		IRelation reflectiveEdges = ResultImporter.getDoopReflectiveCallGraphEdges(doopHome);
 		IRelation entryPoints = ResultImporter.getDoopEntryPoints(doopHome);
 
 		// Create the graph entry points
@@ -73,6 +74,18 @@ public class ProbeUtils {
 			}
 		}
 
+		// Add the reflective edges for anything but DoopAverroes 
+		if (!isAverroes) {
+			for (int i = 0; i < reflectiveEdges.size(); i++) {
+				String dstName = (String) reflectiveEdges.get(i).get(1).getValue();
+				ProbeMethod dst = createProbeMethodBySignature(dstName);
+
+				if (isApplicationMethod(dst)) {
+					probe.edges().add(new CallEdge(LIBRARY_BLOB, dst));
+				}
+			}
+		}
+
 		return probe;
 	}
 
@@ -83,44 +96,48 @@ public class ProbeUtils {
 	 * @return
 	 */
 	public static CallGraph convertWalaCallGraph(BasicCallGraph<?> walaCallGraph) {
-		CallGraph probeGraph = new CallGraph();
+		probe.CallGraph probeGraph = new probe.CallGraph();
 
-		// Get the entry points
-		for (CGNode entrypoint : walaCallGraph.getEntrypointNodes()) {
-			probeGraph.entryPoints().add(ProbeUtils.probeMethod(entrypoint));
-		}
-
-		// Edges from fake root clinit node are also entry points
 		CGNode root = walaCallGraph.getFakeRootNode();
 		CGNode clinit = walaCallGraph.getFakeWorldClinitNode();
-		Iterator<CGNode> moreEntryPoints = walaCallGraph.getSuccNodes(clinit);
-		while (moreEntryPoints.hasNext()) {
-			CGNode node = moreEntryPoints.next();
-			ProbeMethod dst = ProbeUtils.probeMethod(node);
-			probeGraph.entryPoints().add(dst);
-		}
+
+		// Edges from FakeRootNode are entry points (ignoring the edge
+		// FakeRootNode => FakeWorldClinit)
+		walaCallGraph.getSuccNodes(root).forEachRemaining(node -> {
+			if (!node.equals(clinit)) {
+				probeGraph.entryPoints().add(ProbeUtils.probeMethod(node));
+			}
+		});
+
+		// Edges from FakeWorldClinit are entry points
+		walaCallGraph.getSuccNodes(clinit).forEachRemaining(node -> {
+			probeGraph.entryPoints().add(ProbeUtils.probeMethod(node));
+		});
+
+		// // Get the entry points
+		// for (CGNode entrypoint : walaCallGraph.getEntrypointNodes()) {
+		// probeGraph.entryPoints().add(ProbeUtils.probeMethod(entrypoint));
+		// }
+		//
+		// // Edges from fake root clinit node are also entry points
+		// Iterator<CGNode> moreEntryPoints =
+		// walaCallGraph.getSuccNodes(clinit);
+		// while (moreEntryPoints.hasNext()) {
+		// CGNode node = moreEntryPoints.next();
+		// ProbeMethod dst = ProbeUtils.probeMethod(node);
+		// probeGraph.entryPoints().add(dst);
+		// }
 
 		// Get the edges
 		for (CGNode node : walaCallGraph) {
-			// Ignore edges from fakeRootNode, they have already been added as
-			// entry points.
-			// Also ignore edges from fakeWorldClinit
-			// if(node.getMethod().getName().toString().equals("doItAll")) {
-			// System.out.println("====================");
-			// System.out.println(node);
-			// System.out.println(node.getIR() + "\n\n");
-			// }
+			// Ignore edges from FakeRootNode and FakeWorldClinit. 
+			// They have already been added as entry points.
 			if (!node.equals(root) && !node.equals(clinit)) {
 				Iterator<CGNode> successors = walaCallGraph.getSuccNodes(node);
 				ProbeMethod src = ProbeUtils.probeMethod(node);
 
 				while (successors.hasNext()) {
 					CGNode succ = successors.next();
-					// System.out.println(node + " ===> " + succ);
-					// if(node.getMethod().getName().toString().equals("doItAll"))
-					// {
-					// System.out.println(succ);
-					// }
 					ProbeMethod dst = ProbeUtils.probeMethod(succ);
 					probeGraph.edges().add(new CallEdge(src, dst));
 				}
@@ -141,17 +158,23 @@ public class ProbeUtils {
 	public static CallGraph convertWalaDynamicCallGraph(String dynamicCGFile) throws IOException {
 		BufferedReader dynamicEdgesFile = new BufferedReader(new InputStreamReader(new GZIPInputStream(
 				new FileInputStream(dynamicCGFile))));
-		CallGraph probecg = new CallGraph();
+		probe.CallGraph probecg = new CallGraph();
 		String line;
 		while ((line = dynamicEdgesFile.readLine()) != null) {
 			StringTokenizer edge = new StringTokenizer(line, "\t");
 			String callerClass = edge.nextToken();
 
-			// Lines that start with "root" are entry points
-			if ("root".equals(callerClass)) {
+			// Lines that start with "root" or "clinit" are entry points
+			if ("root".equals(callerClass) || "clinit".equals(callerClass)) {
 				String cls = edge.nextToken().replaceAll("/", ".");
 				String subSig = edge.nextToken();
 				probecg.entryPoints().add(probeMethod(cls, subSig));
+			} else if ("callbacks".equals(callerClass)) { // a callback from the
+															// java standard
+															// library
+				String cls = edge.nextToken().replaceAll("/", ".");
+				String subSig = edge.nextToken();
+				probecg.edges().add(new CallEdge(LIBRARY_BLOB, probeMethod(cls, subSig)));
 			} else { // a normal edge
 				String callerSubSig = edge.nextToken();
 				String calleeClass = edge.nextToken().replaceAll("/", ".");

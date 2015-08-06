@@ -600,6 +600,9 @@ function output-results()
   echo "retrieving call graph edges ..."
   { /usr/bin/time -f "elapsed time: %es" $bloxbatch -db $database -print InsensCallGraphEdge 1>InsensCallGraphEdge.results; } 2>&1
 
+  echo "retrieving reflective call graph edges ..."
+  { /usr/bin/time -f "elapsed time: %es" $bloxbatch -db $database -print ReflectiveCallGraphEdge 1>ReflectiveCallGraphEdge.results; } 2>&1
+  
   echo "retrieving entry points ..."
   { /usr/bin/time -f "elapsed time: %es" $bloxbatch -db $database -print MainMethodDeclaration 1>MainMethodDeclaration.results; } 2>&1
 }

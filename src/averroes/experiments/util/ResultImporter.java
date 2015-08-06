@@ -78,7 +78,7 @@ public class ResultImporter {
 	 * @return
 	 * @throws IOException
 	 */
-	public static IRelation getReflectiveCallGraphEdges(String doopHome) throws IOException {
+	public static IRelation getDoopReflectiveCallGraphEdges(String doopHome) throws IOException {
 		return retrieve(doopHome.concat(File.separator).concat("ReflectiveCallGraphEdge.results"));
 	}
 
