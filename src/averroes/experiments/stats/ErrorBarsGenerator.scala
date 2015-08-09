@@ -15,16 +15,15 @@ object ErrorBarsGenerator {
 
     emitTime(tool = "Spark", isAve = false)
     emitTime(tool = "Spark", isAve = true)
-    emitMemory(tool = "Spark", isAve = false)
-    emitMemory(tool = "Spark", isAve = true)
-
     emitDoopTime(isAve = false)
     emitDoopTime(isAve = true)
-    emitMemory(tool = "Doop", isAve = false)
-    emitMemory(tool = "Doop", isAve = true)
-
     emitTime(tool = "Wala", isAve = false)
     emitTime(tool = "Wala", isAve = true)
+    
+    emitMemory(tool = "Spark", isAve = false)
+    emitMemory(tool = "Spark", isAve = true)
+    emitMemory(tool = "Doop", isAve = false)
+    emitMemory(tool = "Doop", isAve = true)
     emitMemory(tool = "Wala", isAve = false)
     emitMemory(tool = "Wala", isAve = true)
   }
