@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="freqs">
+	<target name="create_run_jar">
+		<delete file="freqs.jar" />
+		<jar destfile="freqs.jar">
+			<manifest>
+				<attribute name="Main-Class" value="averroes.experiments.stats.FreqsGenerator" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="../bin/" />
+			<fileset dir="/Users/karim/Dropbox/workspace/probe/bin" />
+			<zipgroupfileset file="../lib/scala-library_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+			<zipgroupfileset file="../lib/scala-reflect_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+		</jar>
+	</target>
+</project>
