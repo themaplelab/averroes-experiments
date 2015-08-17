@@ -2,6 +2,7 @@ package averroes.experiments.soot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -15,9 +16,15 @@ import soot.G;
 import soot.Kind;
 import soot.Scene;
 import soot.SootClass;
+import soot.SootField;
 import soot.SootMethod;
 import soot.SourceLocator;
 import soot.jimple.spark.SparkTransformer;
+import soot.jimple.spark.pag.AllocNode;
+import soot.jimple.spark.pag.Node;
+import soot.jimple.spark.pag.PAG;
+import soot.jimple.spark.sets.DoublePointsToSet;
+import soot.jimple.spark.sets.P2SetVisitor;
 import soot.options.Options;
 import averroes.properties.AverroesProperties;
 import averroes.soot.Names;
@@ -67,6 +74,32 @@ public class SparkCallGraphTransformer {
 		CallGraph probecg = new CallGraph();
 		soot.jimple.toolkits.callgraph.CallGraph cg = Scene.v().getCallGraph();
 
+		// TODO
+		PAG pag = (PAG) Scene.v().getPointsToAnalysis();
+		SootField f = Scene.v().getSootClass(Names.AVERROES_ABSTRACT_LIBRARY_CLASS)
+				.getFieldByName(Names.LIBRARY_POINTS_TO);
+
+		SootMethod m = Scene.v().getMethod(Names.AVERROES_LIBRARY_DO_IT_ALL_METHOD_SIGNATURE);
+		System.out.println(m.getActiveBody());
+		m.getActiveBody().getLocals().stream().filter(l -> l.getName().equals("r0"))
+				.map(l -> pag.reachingObjects(l, f)).forEach(pt -> ((DoublePointsToSet) pt).forall(new P2SetVisitor() {
+					public void visit(Node n) {
+						AllocNode key = (AllocNode) n;
+						Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
+					}
+				}));
+
+		SootMethod m2 = Scene.v().getSootClass("org.hsqldb.Table").getMethodByName("deleteNoCheck");
+		List<String> locals = Arrays.asList("$r7", "$r8");
+		System.out.println(m2.getActiveBody());
+		m2.getActiveBody().getLocals().stream().filter(l -> locals.contains(l.getName()))
+				.map(l -> pag.reachingObjects(l)).forEach(pt -> ((DoublePointsToSet) pt).forall(new P2SetVisitor() {
+					public void visit(Node n) {
+						AllocNode key = (AllocNode) n;
+						Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
+					}
+				}));
+
 		Iterator<soot.jimple.toolkits.callgraph.Edge> it = cg.listener();
 		while (it.hasNext()) {
 			soot.jimple.toolkits.callgraph.Edge e = it.next();
@@ -79,6 +112,10 @@ public class SparkCallGraphTransformer {
 		for (SootMethod method : Scene.v().getEntryPoints()) {
 			probecg.entryPoints().add(probeMethod(method));
 		}
+
+		// DijkstraAlgorithm alg = new DijkstraAlgorithm(probecg);
+		// alg.execute(ProbeUtils.LIBRARY_BLOB);
+		// System.out.println(alg.getPath(ProbeUtils.createProbeMethodBySignature(m.getSignature())));
 
 		return probecg;
 	}

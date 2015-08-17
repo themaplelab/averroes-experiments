@@ -1,9 +1,7 @@
 package averroes.experiments;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Iterator;
 import java.util.jar.JarFile;
 
@@ -13,20 +11,25 @@ import averroes.experiments.util.CommandExecuter;
 import averroes.experiments.util.FileUtils;
 import averroes.experiments.util.ProbeUtils;
 import averroes.properties.AverroesProperties;
+import averroes.soot.Names;
 import averroes.util.TimeUtils;
 
+import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
 import com.ibm.wala.ipa.callgraph.ContextSelector;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.BasicCallGraph;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.callgraph.impl.Util;
+import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
+import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
 import com.ibm.wala.ipa.callgraph.propagation.SSAContextInterpreter;
 import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
 import com.ibm.wala.ipa.callgraph.propagation.cfa.ZeroXCFABuilder;
@@ -35,15 +38,14 @@ import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.shrikeCT.InvalidClassFileException;
+import com.ibm.wala.ssa.IR;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.Descriptor;
 import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.util.config.AnalysisScopeReader;
-import com.ibm.wala.util.config.FileOfClasses;
 import com.ibm.wala.util.debug.Assertions;
-import com.ibm.wala.util.io.FileProvider;
 import com.ibm.wala.util.strings.Atom;
 
 /**
@@ -65,8 +67,6 @@ public class CallGraphFactory {
 		CallGraph spark = new SparkCallGraphTransformer(base, benchmark, isAverroes).getProbeCallGraph();
 		System.out.println("size of original spark is: " + spark.edges().size());
 		return spark;
-		// return SootCallGraphConverter.convert(spark, isAverroes ?
-		// CallGraphSource.SPARK_AVERROES : CallGraphSource.SPARK);
 	}
 
 	/**
@@ -109,7 +109,7 @@ public class CallGraphFactory {
 		String exclusionFile = CallGraphFactory.class.getClassLoader()
 				.getResource(CallGraphTestUtil.REGRESSION_EXCLUSIONS).getPath();
 
-		AnalysisScope scope = isAve ? makeAverroesAnalysisScope(base, benchmark, exclusionFile) : AnalysisScopeReader
+		AnalysisScope scope = isAve ? makeAverroesAnalysisScope(base, benchmark) : AnalysisScopeReader
 				.makeJavaBinaryAnalysisScope(classpath, new File(exclusionFile));
 
 		ClassHierarchy cha = ClassHierarchy.make(scope);
@@ -120,6 +120,7 @@ public class CallGraphFactory {
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		options.setReflectionOptions(isAve ? ReflectionOptions.NONE
 				: ReflectionOptions.MULTI_FLOW_TO_CASTS_APPLICATION_GET_METHOD);
+		options.setHandleZeroLengthArray(isAve ? false : true);
 
 		SSAPropagationCallGraphBuilder builder = isAve ? makeZeroOneCFABuilder(options, new AnalysisCache(), cha,
 				scope, null, null) : Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope, null, null);
@@ -128,11 +129,11 @@ public class CallGraphFactory {
 		BasicCallGraph<?> cg = (BasicCallGraph<?>) builder.makeCallGraph(options, null);
 		System.out.println("[Wala] Solution found in " + TimeUtils.elapsedSplitTime() + " seconds.");
 
+		// dumpCG(scope.getApplicationLoader(), builder.getPointerAnalysis(),
+		// cg);
+
 		// 2. Convert the Wala call graph to probe and collapse it
 		return ProbeUtils.convertWalaCallGraph(cg);
-		// probe.CallGraph wala = ProbeUtils.getProbeCallGraph(cg);
-		// return ProbeCallGraphCollapser.collapse(wala, isAve ?
-		// CallGraphSource.WALA_AVERROES : CallGraphSource.WALA);
 	}
 
 	public static SSAPropagationCallGraphBuilder makeZeroOneCFABuilder(AnalysisOptions options, AnalysisCache cache,
@@ -149,17 +150,13 @@ public class CallGraphFactory {
 						| ZeroXInstanceKeys.SMUSH_PRIMITIVE_HOLDERS | ZeroXInstanceKeys.SMUSH_STRINGS
 						| ZeroXInstanceKeys.SMUSH_THROWABLES);
 	}
-	
 
-	public static AnalysisScope makeAverroesAnalysisScope(String base, String benchmark, String exclusions)
-			throws IOException, IllegalArgumentException, InvalidClassFileException {
+	public static AnalysisScope makeAverroesAnalysisScope(String base, String benchmark) throws IOException,
+			IllegalArgumentException, InvalidClassFileException {
 		AnalysisScope scope = AnalysisScope.createJavaAnalysisScope();
 
-		// Exclusion file
-		File exclusionsFile = new File(exclusions);
-		InputStream fs = exclusionsFile.exists() ? new FileInputStream(exclusionsFile) : FileProvider.class
-				.getClassLoader().getResourceAsStream(exclusionsFile.getName());
-		scope.setExclusions(new FileOfClasses(fs));
+		// There should be no exclusions when using Averroes
+		// scope.setExclusions(new FileOfClasses(fs));
 
 		// Library stuff
 		scope.addToScope(ClassLoaderReference.Application,
@@ -218,6 +215,92 @@ public class CallGraphFactory {
 				};
 			}
 		};
+	}
 
+	public static void dumpCG(ClassLoaderReference loaderRef, PointerAnalysis<InstanceKey> PA,
+			com.ibm.wala.ipa.callgraph.CallGraph CG) {
+		TypeReference T = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName("Lorg/hsqldb/Table"));
+		MethodReference M = MethodReference
+				.findOrCreate(T, "deleteNoCheck", "(Lorg/hsqldb/Session;Lorg/hsqldb/Row;Z)V");
+		CGNode N = CG.getNodes(M).iterator().next();
+		System.err.print("callees of node " + getShortName(N) + " : [");
+		boolean fst = true;
+		for (Iterator<? extends CGNode> ns = CG.getSuccNodes(N); ns.hasNext();) {
+			if (fst)
+				fst = false;
+			else
+				System.err.print(", ");
+			System.err.print(getShortName(ns.next()));
+		}
+		System.err.println("]");
+		System.err.println("\nIR of node " + N.getGraphNodeId() + ", context " + N.getContext());
+		IR ir = N.getIR();
+		if (ir != null) {
+			System.err.println(ir);
+		} else {
+			System.err.println("no IR!");
+		}
+
+		System.err.println("pointer analysis");
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 19) + " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 19)).forEach(
+				p -> System.out.println(p + " :: " + p.getClass()));
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 20) + " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 20)).forEach(System.out::println);
+
+		TypeReference T2 = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName("Laverroes/Library"));
+		MethodReference M2 = MethodReference.findOrCreate(T2, Names.AVERROES_DO_IT_ALL_METHOD_NAME, "()V");
+		CGNode N2 = CG.getNodes(M2).iterator().next();
+		System.err.print("callees of node " + getShortName(N2) + " : [");
+		fst = true;
+		for (Iterator<? extends CGNode> ns = CG.getSuccNodes(N2); ns.hasNext();) {
+			if (fst)
+				fst = false;
+			else
+				System.err.print(", ");
+			System.err.print(getShortName(ns.next()));
+		}
+		System.err.println("]");
+		System.err.println("\nIR of node " + N2.getGraphNodeId() + ", context " + N2.getContext());
+		ir = N2.getIR();
+		if (ir != null) {
+			System.err.println(ir);
+		} else {
+			System.err.println("no IR!");
+		}
+
+		System.err.println("pointer analysis");
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1870) + " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1870)).forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1871) + " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1871)).forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 613) + " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 613)).forEach(System.out::println);
+	}
+
+	public static String getShortName(CGNode nd) {
+		IMethod method = nd.getMethod();
+		return getShortName(method);
+	}
+
+	public static String getShortName(IMethod method) {
+		String origName = method.getName().toString();
+		String result = origName;
+		if (origName.equals("do") || origName.equals("ctor")) {
+			result = method.getDeclaringClass().getName().toString();
+			result = result.substring(result.lastIndexOf('/') + 1);
+			if (origName.equals("ctor")) {
+				if (result.equals("LFunction")) {
+					String s = method.toString();
+					if (s.indexOf('(') != -1) {
+						String functionName = s.substring(s.indexOf('(') + 1, s.indexOf(')'));
+						functionName = functionName.substring(functionName.lastIndexOf('/') + 1);
+						result += " " + functionName;
+					}
+				}
+				result = "ctor of " + result;
+			}
+		}
+		return result;
 	}
 }

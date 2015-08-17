@@ -59,7 +59,6 @@ object LatexGenerator {
   final val sep = "\t"
   //  final val perChar = "\\%"
 
-  final val dataout = new PrintStream("tex/data.tex")
   final val freqsout = Map[String, PrintStream](
     sparkave -> new PrintStream("tex/sparkave.stats"),
     doopave -> new PrintStream("tex/doopave.stats"),
@@ -331,9 +330,7 @@ object LatexGenerator {
     freqs(doopave).foreach { m => freqsout(doopave).println(m._1 + "\t" + benchmarks.map(m._2.getOrElse(_, 0)).mkString("\t")) }
     freqs(walaave).foreach { m => freqsout(walaave).println(m._1 + "\t" + benchmarks.map(m._2.getOrElse(_, 0)).mkString("\t")) }
 
-    freqsout.foreach(_._2.close)
-
     // Close streams
-    dataout.close
+    freqsout.foreach(_._2.close)
   }
 }

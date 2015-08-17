@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+
+set -e
+
+base=$1
+benchmark=$2
+outputdir=${base}/callgraphs/${benchmark} 
+  
+echo "running ${benchmark}"
+
+# 1. create output directory
+mkdir -p ${outputdir}/
+
+# 2. run wala
+echo "  running wala"
+./run-tool wala -vanilla ${base} ${benchmark} > ${outputdir}/wala.log 2>&1
+echo "  running wala-averroes"
+./run-tool wala -averroes ${base} ${benchmark} > ${outputdir}/wala-averroes.log 2>&1
