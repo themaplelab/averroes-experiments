@@ -75,30 +75,37 @@ public class SparkCallGraphTransformer {
 		soot.jimple.toolkits.callgraph.CallGraph cg = Scene.v().getCallGraph();
 
 		// TODO
-		PAG pag = (PAG) Scene.v().getPointsToAnalysis();
-		SootField f = Scene.v().getSootClass(Names.AVERROES_ABSTRACT_LIBRARY_CLASS)
-				.getFieldByName(Names.LIBRARY_POINTS_TO);
-
-		SootMethod m = Scene.v().getMethod(Names.AVERROES_LIBRARY_DO_IT_ALL_METHOD_SIGNATURE);
-		System.out.println(m.getActiveBody());
-		m.getActiveBody().getLocals().stream().filter(l -> l.getName().equals("r0"))
-				.map(l -> pag.reachingObjects(l, f)).forEach(pt -> ((DoublePointsToSet) pt).forall(new P2SetVisitor() {
-					public void visit(Node n) {
-						AllocNode key = (AllocNode) n;
-						Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
-					}
-				}));
-
-		SootMethod m2 = Scene.v().getSootClass("org.hsqldb.Table").getMethodByName("deleteNoCheck");
-		List<String> locals = Arrays.asList("$r7", "$r8");
-		System.out.println(m2.getActiveBody());
-		m2.getActiveBody().getLocals().stream().filter(l -> locals.contains(l.getName()))
-				.map(l -> pag.reachingObjects(l)).forEach(pt -> ((DoublePointsToSet) pt).forall(new P2SetVisitor() {
-					public void visit(Node n) {
-						AllocNode key = (AllocNode) n;
-						Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
-					}
-				}));
+		// PAG pag = (PAG) Scene.v().getPointsToAnalysis();
+		// SootField f =
+		// Scene.v().getSootClass(Names.AVERROES_ABSTRACT_LIBRARY_CLASS)
+		// .getFieldByName(Names.LIBRARY_POINTS_TO);
+		//
+		// SootMethod m =
+		// Scene.v().getMethod(Names.AVERROES_LIBRARY_DO_IT_ALL_METHOD_SIGNATURE);
+		// System.out.println(m.getActiveBody());
+		// m.getActiveBody().getLocals().stream().filter(l ->
+		// l.getName().equals("r0"))
+		// .map(l -> pag.reachingObjects(l, f)).forEach(pt ->
+		// ((DoublePointsToSet) pt).forall(new P2SetVisitor() {
+		// public void visit(Node n) {
+		// AllocNode key = (AllocNode) n;
+		// Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
+		// }
+		// }));
+		//
+		// SootMethod m2 =
+		// Scene.v().getSootClass("org.hsqldb.Table").getMethodByName("deleteNoCheck");
+		// List<String> locals = Arrays.asList("$r7", "$r8");
+		// System.out.println(m2.getActiveBody());
+		// m2.getActiveBody().getLocals().stream().filter(l ->
+		// locals.contains(l.getName()))
+		// .map(l -> pag.reachingObjects(l)).forEach(pt -> ((DoublePointsToSet)
+		// pt).forall(new P2SetVisitor() {
+		// public void visit(Node n) {
+		// AllocNode key = (AllocNode) n;
+		// Arrays.stream(pag.allocLookup(key)).forEach(System.out::println);
+		// }
+		// }));
 
 		Iterator<soot.jimple.toolkits.callgraph.Edge> it = cg.listener();
 		while (it.hasNext()) {

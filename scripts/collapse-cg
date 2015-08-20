@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+set -e
+
+benchmark=$1
+
+date
+
+cp properties/${benchmark}.properties averroes.properties
+jar uf conv.jar averroes.properties
+java -jar conv.jar original-call-graphs/original-dynamic-call-graphs/${benchmark}/callgraph.txt.gzip
+
+date

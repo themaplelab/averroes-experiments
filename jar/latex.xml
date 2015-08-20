@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="latex">
+<project default="create_run_jar" name="latex" basedir=".">
 	<target name="create_run_jar">
 		<delete file="latex.jar" />
 		<jar destfile="latex.jar">
@@ -8,7 +8,7 @@
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="../bin/" />
-			<fileset dir="/Users/karim/Dropbox/workspace/probe/bin" />
+			<fileset dir="${basedir}/../../probe/bin" />
 			<zipgroupfileset file="../lib/scala-library_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
 			<zipgroupfileset file="../lib/scala-reflect_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
 		</jar>

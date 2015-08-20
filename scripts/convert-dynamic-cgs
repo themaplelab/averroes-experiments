@@ -1,0 +1,24 @@
+#! /usr/bin/env bash
+
+set -e
+
+# the dacapo benchmarks
+dacapo=( antlr bloat chart hsqldb luindex lusearch pmd xalan)
+dacapo=( "${dacapo[@]/#/dacapo/}" )
+
+# the specjvm benchmarks
+specjvm=( compress db jack javac jess raytrace )
+specjvm=( "${specjvm[@]/#/specjvm/}" )
+
+# put them all in one big array
+benchmarks=( ${dacapo[@]} ${specjvm[@]} )
+
+date
+for benchmark in ${benchmarks[@]}
+do
+  cp properties/${benchmark}.properties averroes.properties
+  jar uf conv.jar averroes.properties
+  java -jar conv.jar original-call-graphs/original-dynamic-call-graphs/${benchmark}/callgraph.gxl
+  mv callgraph.txt.gzip callgraphs-vanilla/${benchmark}/dynamic.txt.gzip
+done
+date

@@ -17,7 +17,6 @@ object FreqsGenerator {
   def emitLibraryCallBackSummariesFor(analysis: String) = {
     val table = new PrintStream(s"tex/table-freqs-${analysis}ave.tex")
     val log = io.Source.fromFile(s"${analysis}ave.stats").getLines.toList.drop(1)
-    val first = if (analysis == "sparkave") "R" else "r"
 
     // Emit Header
     table.println("\\begin{table}")
