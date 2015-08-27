@@ -213,6 +213,48 @@ object LatexGenerator {
     table.println("\\end{table}")
     table.close
   }
+  
+  def emitPrecisionTable = {
+    val table = new PrintStream(s"tex/table-$imprecision.tex")
+    val base = "stats"
+
+    // Emit Header
+    table.println("\\begin{table}")
+    table.println("  \\centering")
+    table.println("  \\caption{Comparing the precision of using \\ave to analyzing the whole program in \\spark, \\doop, and \\wala.}")
+    table.println("  \\label{table:precision}")
+    table.println("  \\resizebox{\\textwidth}{!}{")
+    table.println("  \\begin{tabular}{lrrrrrr}")
+    table.println("    \\toprule")
+    table.println("    & \\multicolumn{2}{c}{\\spark} & \\multicolumn{2}{c}{\\doop} & \\multicolumn{2}{c}{\\wala} \\\\")
+    table.println("    \\cmidrule(l){2-3} \\cmidrule(l){4-5} \\cmidrule(l){6-7}")
+    table.println("    & \\whole & \\mathify{\\ave \\setdiff \\whole} & \\whole & \\mathify{\\ave \\setdiff \\whole} & \\whole & \\mathify{\\ave \\setdiff \\whole} \\\\")
+    table.println("    \\cmidrule(l){2-3} \\cmidrule(l){4-5} \\cmidrule(l){6-7}")
+
+    for (benchmark <- benchmarks) {
+      var row = new StringBuilder("    ")
+
+      // add benchmark name in italics
+      row append s"\\$benchmark"
+
+      // Read the edges info
+      row append s" & ${intFormat(data(countKey(spark, benchmark, a2a)) + data(countKey(spark, benchmark, a2l)) + data(countKey(spark, benchmark, l2a)))}"
+      row append s" & ${intFormat(data(imprecisionKey(sparkave, benchmark, a2a)) + data(imprecisionKey(sparkave, benchmark, a2l)) + data(imprecisionKey(sparkave, benchmark, l2a)))}"
+      row append s" & ${intFormat(data(countKey(doop, benchmark, a2a)) + data(countKey(doop, benchmark, a2l)) + data(countKey(doop, benchmark, l2a)))}"
+      row append s" & ${intFormat(data(imprecisionKey(doopave, benchmark, a2a)) + data(imprecisionKey(doopave, benchmark, a2l)) + data(imprecisionKey(doopave, benchmark, l2a)))}"
+      row append s" & ${intFormat(data(countKey(wala, benchmark, a2a)) + data(countKey(wala, benchmark, a2l)) + data(countKey(wala, benchmark, l2a)))}"
+      row append s" & ${intFormat(data(imprecisionKey(walaave, benchmark, a2a)) + data(imprecisionKey(walaave, benchmark, a2l)) + data(imprecisionKey(walaave, benchmark, l2a)))}"
+      row append " \\\\"
+      if (benchmark != benchmarks.last) row append " \\midrule" // Midrule except for the last row
+      table.println(row)
+    }
+
+    // Emit Footer
+    table.println("    \\bottomrule")
+    table.println("  \\end{tabular}}")
+    table.println("\\end{table}")
+    table.close
+  }
 
   def emitPrecisionTable(tpe: String) = {
     val table = new PrintStream(s"tex/table-$imprecision-$tpe.tex")
@@ -321,6 +363,7 @@ object LatexGenerator {
 
     // Emit latex files
     emitSoundnessTable
+    emitPrecisionTable
     emitPrecisionTable(a2a)
     emitPrecisionTable(a2l)
     emitPrecisionTable(l2a)

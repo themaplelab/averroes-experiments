@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="hsqldbxalan" basedir=".">
+	<target name="create_run_jar">
+		<delete file="hsqldbxalan.jar" />
+		<jar destfile="hsqldbxalan.jar">
+			<manifest>
+				<attribute name="Main-Class" value="averroes.experiments.stats.HsqldbXalan" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="../bin/" />
+			<fileset dir="${basedir}/../../probe/bin" />
+			<zipgroupfileset file="../lib/scala-library_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+			<zipgroupfileset file="../lib/scala-reflect_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+		</jar>
+	</target>
+</project>
