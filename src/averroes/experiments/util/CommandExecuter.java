@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-import averroes.properties.AverroesProperties;
+import averroes.experiments.options.ExperimentsOptions;
 
 public class CommandExecuter {
 
@@ -36,7 +36,7 @@ public class CommandExecuter {
 		String exec = isAverroes ? FileUtils.doopAverroesRunExe(doopHome) : FileUtils.doopRunExe(doopHome);
 		String lib = isAverroes ? FileUtils.placeholderLibraryJarFile(base, benchmark) : FileUtils
 				.organizedLibraryJarFile(base, benchmark);
-		String[] cmdArray = { exec, "1.4", AverroesProperties.getMainClass(),
+		String[] cmdArray = { exec, "1.4", ExperimentsOptions.getMainClass(),
 				FileUtils.organizedApplicationJarFile(base, benchmark), lib };
 		// AverroesProperties.getInputJarFilesForSpark().trim(),
 		// AverroesProperties.getLibraryClassPath().trim() };

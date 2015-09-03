@@ -10,7 +10,7 @@ import averroes.experiments.soot.SparkCallGraphTransformer;
 import averroes.experiments.util.CommandExecuter;
 import averroes.experiments.util.FileUtils;
 import averroes.experiments.util.ProbeUtils;
-import averroes.properties.AverroesProperties;
+import averroes.options.AverroesOptions;
 import averroes.soot.Names;
 import averroes.util.TimeUtils;
 
@@ -115,7 +115,7 @@ public class CallGraphFactory {
 		ClassHierarchy cha = ClassHierarchy.make(scope);
 
 		Iterable<Entrypoint> entrypoints = makeMainEntrypoints(scope.getApplicationLoader(), cha, new String[] { "L"
-				+ AverroesProperties.getMainClass().replaceAll("\\.", "/") }, isAve);
+				+ AverroesOptions.getMainClass().replaceAll("\\.", "/") }, isAve);
 
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		options.setReflectionOptions(isAve ? ReflectionOptions.NONE

@@ -26,7 +26,7 @@ import soot.jimple.spark.pag.PAG;
 import soot.jimple.spark.sets.DoublePointsToSet;
 import soot.jimple.spark.sets.P2SetVisitor;
 import soot.options.Options;
-import averroes.properties.AverroesProperties;
+import averroes.options.AverroesOptions;
 import averroes.soot.Names;
 
 public class SparkCallGraphTransformer {
@@ -48,13 +48,13 @@ public class SparkCallGraphTransformer {
 		// Set some soot parameters
 		SourceLocator.v().setClassProviders(Collections.singletonList((ClassProvider) provider));
 		Options.v().classes().addAll(provider.getApplicationClassNames());
-		Options.v().set_main_class(AverroesProperties.getMainClass());
+		Options.v().set_main_class(AverroesOptions.getMainClass());
 		Options.v().set_whole_program(true);
 
 		// Dynamic classes are only relevant for the vanilla Spark
 		if (!isAverroes) {
 			addCommonDynamicClasses(provider);
-			Options.v().set_dynamic_class(AverroesProperties.getDynamicClasses());
+			Options.v().set_dynamic_class(AverroesOptions.getDynamicClasses());
 		} else {
 			// required since this class is not related to any other class now
 			Options.v().classes().add(Names.AVERROES_LIBRARY_CLASS);

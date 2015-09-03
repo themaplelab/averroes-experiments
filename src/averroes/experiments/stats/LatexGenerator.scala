@@ -26,6 +26,7 @@ object LatexGenerator {
   final val wala = "wala"
   final val walaave = s"$wala-$averroes"
   final val whole = "whole"
+  final val wholedyn = "wholedyn"
   final val averroes = "averroes"
 
   // The tools
@@ -66,6 +67,12 @@ object LatexGenerator {
 
   final val data = collection.mutable.Map[String, Int]()
   final val freqs = Map[String, collection.mutable.Map[String, Map[String, Int]]](
+    spark + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
+    doop + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
+    wala + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
+    sparkave + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
+    doopave + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
+    walaave + dynamic -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
     sparkave -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
     doopave -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()),
     walaave -> collection.mutable.Map[String, Map[String, Int]]().withDefaultValue(Map[String, Int]()))
@@ -140,6 +147,37 @@ object LatexGenerator {
   }
 
   def emitPrecision(title: String, edgeFilter: CallEdge => Boolean, tpe: String) = {
+    println(title)
+    println("=" * title.length)
+
+    for {
+      tool <- tools.tail
+      prog <- benchmarks
+      benchmark = benchmarkFull(prog)
+    } {
+      val dyn = new TextReader().readCallGraph(s"$base/$benchmark/dynamic.txt.gzip").edges filter edgeFilter
+      val cg = new TextReader().readCallGraph(s"$base/$benchmark/$tool.txt.gzip").edges filter edgeFilter
+      
+      val diff = cg diff dyn
+
+      // process the call back frequencies
+      if (tpe == l2a) {
+        val cbs = collection.mutable.Map[String, Int]().withDefaultValue(0)
+        diff.foreach(d => cbs(d.dst.name) += 1)
+        cbs.keys.foreach(m => freqs(tool + dynamic)(m) += (prog -> cbs(m)))
+      }
+
+      val precision = diff.size
+      data += (imprecisionKey(tool + dynamic, prog, tpe) -> precision)
+      if (prog != benchmarks.last) print(precision + "\t")
+      else print(precision + "\n")
+    }
+
+    println
+    println
+  }
+  
+    def emitPrecisionSoundComparison(title: String, edgeFilter: CallEdge => Boolean, tpe: String) = {
     println(title)
     println("=" * title.length)
 
@@ -360,6 +398,11 @@ object LatexGenerator {
     emitPrecision("Precision::A2A", a2aFilter, a2a)
     emitPrecision("Precision::A2L", a2lFilter, a2l)
     emitPrecision("Precision::L2A", l2aFilter, l2a)
+    
+    // Precision vs corrected Whole
+    emitPrecisionSoundComparison("PrecisionSound::A2A", a2aFilter, a2a)
+    emitPrecisionSoundComparison("PrecisionSound::A2L", a2lFilter, a2l)
+    emitPrecisionSoundComparison("PrecisionSound::L2A", l2aFilter, l2a)
 
     // Emit latex files
     emitSoundnessTable

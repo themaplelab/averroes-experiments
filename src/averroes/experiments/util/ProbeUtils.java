@@ -17,8 +17,6 @@ import probe.ObjectManager;
 import probe.ProbeClass;
 import probe.ProbeMethod;
 import soot.SootMethod;
-import averroes.properties.AverroesProperties;
-import averroes.soot.Names;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -33,7 +31,7 @@ import com.ibm.wala.ipa.callgraph.impl.BasicCallGraph;
 public class ProbeUtils {
 
 	public static final ProbeMethod LIBRARY_BLOB = ObjectManager.v().getMethod(
-			ObjectManager.v().getClass(Names.AVERROES_LIBRARY_CLASS), Names.BLOB, "");
+			ObjectManager.v().getClass("averroes.Library"), "blob", "");
 
 	/**
 	 * Convert the generated Doop call graph to summarized Probe version.
@@ -74,7 +72,7 @@ public class ProbeUtils {
 			}
 		}
 
-		// Add the reflective edges for anything but DoopAverroes 
+		// Add the reflective edges for anything but DoopAverroes
 		if (!isAverroes) {
 			for (int i = 0; i < reflectiveEdges.size(); i++) {
 				String dstName = (String) reflectiveEdges.get(i).get(1).getValue();
@@ -130,7 +128,7 @@ public class ProbeUtils {
 
 		// Get the edges
 		for (CGNode node : walaCallGraph) {
-			// Ignore edges from FakeRootNode and FakeWorldClinit. 
+			// Ignore edges from FakeRootNode and FakeWorldClinit.
 			// They have already been added as entry points.
 			if (!node.equals(root) && !node.equals(clinit)) {
 				Iterator<CGNode> successors = walaCallGraph.getSuccNodes(node);
@@ -472,7 +470,7 @@ public class ProbeUtils {
 	 * @return
 	 */
 	public static boolean isApplicationMethod(ProbeMethod probeMethod) {
-		return AverroesProperties.isApplicationClass(probeMethod.cls());
+		return AverroesOptions.isApplicationClass(probeMethod.cls());
 	}
 
 	// public static void main(String[] args) {

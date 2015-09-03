@@ -18,8 +18,8 @@ import soot.ClassSource;
 import soot.CoffiClassSource;
 import soot.coffi.ClassFile;
 import averroes.experiments.util.FileUtils;
-import averroes.util.io.Resource;
-import averroes.util.io.ZipEntryResource;
+import averroes.experiments.util.io.Resource;
+import averroes.experiments.util.io.ZipEntryResource;
 
 /**
  * This class provider adds the Java classes from the application JAR to the
