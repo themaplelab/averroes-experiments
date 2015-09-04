@@ -22,7 +22,7 @@ public class Files {
 	 * @return
 	 */
 	public static File callGraphGzipFile() {
-		return new File(ExperimentsOptions.getOutputDirectory(), "callgraph.txt.gzip");
+		return new File(ExperimentsOptions.getOutputDirectory(), ExperimentsOptions.getToolName() + ".txt.gzip");
 	}
 
 	/**

@@ -2,14 +2,15 @@
 
 set -e
 
+jre=$1
+
 date
 for i in {1..10}
 do
-  base=all-output/${i}
+  base=all-output-${jre}/${i}
   echo "running for the ${i}th time!"
-  echo "running Averroes"
-  ./averroes-all ${base} -tfx -dyn
-  ./run-all-benchmarks ${base}
+  ./averroes-all ${base} ${jre}
+  ./run-all-benchmarks ${base} ${jre}
   echo " "
   echo " "
   echo " "

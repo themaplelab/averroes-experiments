@@ -3,6 +3,7 @@
 set -e
 
 base=$1
+jre=$2
 
 # the dacapo benchmarks
 dacapo=( antlr bloat chart hsqldb luindex lusearch pmd xalan)
@@ -18,6 +19,6 @@ benchmarks=( ${dacapo[@]} ${specjvm[@]} )
 date
 for benchmark in ${benchmarks[@]}
 do
-  ./run-benchmark ${base} ${benchmark}
+  ./run-benchmark ${benchmark} ${base} ${jre}
 done
 date

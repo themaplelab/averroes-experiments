@@ -44,9 +44,9 @@ public final class ExperimentsOptions {
 
 	private static Option averroes = Option.builder("a").longOpt("averroes")
 			.desc("run averroes or the vanilla analysis?").hasArg(false).required(false).build();
-	
-	private static Option jre = Option.builder("j").longOpt("jre-version")
-			.desc("the JRE version passed to DOOP").hasArg().required().build();
+
+	private static Option jre = Option.builder("j").longOpt("jre-version").desc("the JRE version passed to DOOP")
+			.hasArg().required().build();
 
 	private static Option applicationRegex = Option.builder("r").longOpt("application-regex")
 			.desc("a list of regular expressions for application packages or classes separated by File.pathSeparator")
@@ -104,6 +104,16 @@ public final class ExperimentsOptions {
 	}
 
 	/**
+	 * Get the full tool name (e.g., spark-averroes for Spark running with
+	 * Averroes).
+	 * 
+	 * @return
+	 */
+	public static String getToolName() {
+		return getTool() + (isAverroes() ? "-averroes" : "");
+	}
+
+	/**
 	 * The base directory for the experiments.
 	 * 
 	 * @return
@@ -129,7 +139,7 @@ public final class ExperimentsOptions {
 	public static boolean isAverroes() {
 		return cmd.hasOption(averroes.getOpt());
 	}
-	
+
 	/**
 	 * The JRE version to pass to DOOP.
 	 * 

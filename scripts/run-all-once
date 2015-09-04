@@ -3,9 +3,9 @@
 set -e
 
 base=$1
+jre=$2
 
 date
-  echo "running Averroes"
-  ./averroes-all ${base} -tfx -dyn
-  ./run-all-benchmarks ${base}
+  ./averroes-all ${base} ${jre}
+  ./run-all-benchmarks ${base} ${jre}
 date

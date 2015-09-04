@@ -2,22 +2,58 @@
 
 set -e
 
-tool=$1
-base=$3
-benchmark=$4
+benchmark=$1
+base=$2
+jre=$3
+tool=$4
+
+# declaring some arrays of options
+declare -A appregex
+appregex["antlr"]='dacapo.antlr.*:antlr.**'
+appregex["bloat"]='dacapo.bloat.*:EDU.purdue.cs.bloat.**'
+appregex["chart"]='dacapo.chart.*:org.jfree.chart.**:org.jfree.data.**'
+appregex["hsqldb"]='dacapo.hsqldb.*:org.hsqldb.**'
+appregex["luindex"]='dacapo.luindex.*:org.apache.lucene.**'
+appregex["lusearch"]='dacapo.lusearch.*:org.apache.lucene.**'
+appregex["pmd"]='dacapo.pmd.*:net.sourceforge.pmd.**'
+appregex["xalan"]='dacapo.xalan.*:org.apache.xalan.**:org.apache.xml.dtm.**:org.apache.xml.utils.**:org.apache.xpath.**:org.w3c.dom.xpath.*'
+appregex["compress"]='spec.benchmarks._201_compress.*'
+appregex["db"]='spec.benchmarks._209_db.*'
+appregex["jack"]='spec.benchmarks._228_jack.*'
+appregex["javac"]='spec.benchmarks._213_javac.*'
+appregex["jess"]='spec.benchmarks._202_jess.**'
+appregex["raytrace"]='spec.benchmarks._205_raytrace.*'
+
+declare -A mainclass
+mainclass["antlr"]='dacapo.antlr.Main2'
+mainclass["bloat"]='dacapo.bloat.Main2'
+mainclass["chart"]='dacapo.chart.Main2'
+mainclass["hsqldb"]='org.hsqldb.hsqldbDoopDriver'
+mainclass["luindex"]='dacapo.luindex.Main2'
+mainclass["lusearch"]='dacapo.lusearch.Main2'
+mainclass["pmd"]='dacapo.pmd.Main2'
+mainclass["xalan"]='dacapo.xalan.Main2'
+mainclass["compress"]='spec.benchmarks._201_compress.Main'
+mainclass["db"]='spec.benchmarks._209_db.Main'
+mainclass["jack"]='spec.benchmarks._228_jack.Main'
+mainclass["javac"]='spec.benchmarks._213_javac.Main'
+mainclass["jess"]='spec.benchmarks._202_jess.Main'
+mainclass["raytrace"]='spec.benchmarks._205_raytrace.Main'
 
 ##################################################################
-if test "$2" = "-averroes"; then
-  averroes=true
+if [ -n "$5" ]; then
+  averroes="-a"
   toolname=${tool}-averroes
 else
-  averroes=false
+  averroes=""
   toolname=${tool}
 fi
 
 program=$(basename $benchmark)
+bench=$(dirname ${benchmark})
 outputdir=${base}/callgraphs/${benchmark}
 doopHome=/u/karim/workspace/doop
+dyn=benchmarks/${bench}/${program}.dyn
 ##################################################################
 
 function monitormemory()
@@ -27,20 +63,14 @@ function monitormemory()
 }
   
 # 1. make some dirs
-mkdir -p ${outputdir}/
+mkdir -p ${outputdir}
 
-# 2. update properties file
-cp properties/${benchmark}.properties averroes.properties
-jar uf tool.jar averroes.properties
-
-# 3. run tool
+# 2. run tool
 echo "running ${toolname} for ${benchmark}"
+monitormemory java -verbose:gc -Xloggc:${outputdir}/${toolname}-gc.log -jar tool.jar -h ${doopHome} -b ${base} -p ${program} -r ${appregex[${program}]} -m ${mainclass[${program}]} -d ${dyn} -o ${outputdir} -j ${jre} -t ${tool} ${averroes}
   
-monitormemory java -verbose:gc -Xloggc:${outputdir}/${toolname}-gc.log -jar tool.jar ${doopHome} ${tool} ${base} ${benchmark} ${averroes}
-cp output/callgraph.txt.gzip ${outputdir}/${toolname}.txt.gzip
-  
-# 4. Do some extra stuff for doop
-if test "${tool}" = "doop"; then
+# 3. Do some extra stuff for doop
+if [ "${tool}" == "doop" ]; then
   # copy database
   echo "making the database of ${toolname} available at ${outputdir}/${toolname}.tar.gz ..."
   tar -czf ${outputdir}/${toolname}.tar.gz ../doop/last-analysis/*
