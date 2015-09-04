@@ -8,7 +8,6 @@ import scala.collection.JavaConversions.asScalaSet
 import probe.TextReader
 import averroes.experiments.util.ProbeUtils
 import probe.CallEdge
-import averroes.soot.Names
 import probe.ObjectManager
 
 object LatexGenerator {

@@ -4,26 +4,81 @@ set -e
 
 benchmark=$1
 base=$2
-tfx=$3
-dyn=$4
+jre=$3
 
+# declaring some arrays of options
+declare -A appregex
+appregex["antlr"]='dacapo.antlr.*:antlr.**'
+appregex["bloat"]='dacapo.bloat.*:EDU.purdue.cs.bloat.**'
+appregex["chart"]='dacapo.chart.*:org.jfree.chart.**:org.jfree.data.**'
+appregex["hsqldb"]='dacapo.hsqldb.*:org.hsqldb.**'
+appregex["luindex"]='dacapo.luindex.*:org.apache.lucene.**'
+appregex["lusearch"]='dacapo.lusearch.*:org.apache.lucene.**'
+appregex["pmd"]='dacapo.pmd.*:net.sourceforge.pmd.**'
+appregex["xalan"]='dacapo.xalan.*:org.apache.xalan.**:org.apache.xml.dtm.**:org.apache.xml.utils.**:org.apache.xpath.**:org.w3c.dom.xpath.*'
+appregex["compress"]='spec.benchmarks._201_compress.*'
+appregex["db"]='spec.benchmarks._209_db.*'
+appregex["jack"]='spec.benchmarks._228_jack.*'
+appregex["javac"]='spec.benchmarks._213_javac.*'
+appregex["jess"]='spec.benchmarks._202_jess.**'
+appregex["raytrace"]='spec.benchmarks._205_raytrace.*'
+
+declare -A mainclass
+mainclass["antlr"]='dacapo.antlr.Main2'
+mainclass["bloat"]='dacapo.bloat.Main2'
+mainclass["chart"]='dacapo.chart.Main2'
+mainclass["hsqldb"]='org.hsqldb.hsqldbDoopDriver'
+mainclass["luindex"]='dacapo.luindex.Main2'
+mainclass["lusearch"]='dacapo.lusearch.Main2'
+mainclass["pmd"]='dacapo.pmd.Main2'
+mainclass["xalan"]='dacapo.xalan.Main2'
+mainclass["compress"]='spec.benchmarks._201_compress.Main'
+mainclass["db"]='spec.benchmarks._209_db.Main'
+mainclass["jack"]='spec.benchmarks._228_jack.Main'
+mainclass["javac"]='spec.benchmarks._213_javac.Main'
+mainclass["jess"]='spec.benchmarks._202_jess.Main'
+mainclass["raytrace"]='spec.benchmarks._205_raytrace.Main'
+
+
+# some useful variables and options
+program=$(basename ${benchmark})
+bench=$(dirname ${benchmark})
+
+# -a -l -d -t
+if [ "${bench}" == "dacapo" ]; then
+	app=benchmarks/dacapo/${program}.jar
+	lib=benchmarks/dacapo/${program}-deps.jar
+elif [ "${bench}" == "specjvm" ]; then
+	app=benchmarks/specjvm/${program}.zip
+	lib=benchmarks/specjvm/spec.zip:benchmarks/specjvm/sunrsasign.jar
+fi
+
+# -d 
+dyn=benchmarks/${bench}/${program}.dyn
+
+# -t
+tfx=benchmarks/${bench}/${program}.tfx
+
+# -j
+if [ "${jre}" == "1.4" ]; then
+	jre=jre/1.4.2_11
+elif [ "${jre}" == "1.6" ]; then
+	jre=jre/1.6.0_45
+elif [ "${jre}" == "1.7" ]; then
+	jre=jre/1.7.0_80
+elif [ "${jre}" == "1.8" ]; then
+	jre=jre/1.8.0_60
+fi
+
+# -o
 outputdir=${base}/benchmarks-averroes/${benchmark}
 
-# make some dirs
+echo "running averroes on ${benchmark} ..."
+
+# 1. create output directory
 mkdir -p ${outputdir}
-
-echo "running ${benchmark}"
-program=$(basename ${benchmark})
   
-# 1. run Averroes
-cp properties/${benchmark}.properties averroes.properties
-jar uf averroes.jar averroes.properties
-java -jar averroes.jar ${tfx} ${dyn} 
-
-# 2. copy the output JARs
-cp output/organized-app.jar ${outputdir}/organized-app.jar
-cp output/organized-lib.jar ${outputdir}/organized-lib.jar
-cp output/placeholder-lib.jar ${outputdir}/placeholder-lib.jar
-cp output/averroes-lib-class.jar ${outputdir}/averroes-lib-class.jar
+# 2. run Averroes
+java -jar averroes.jar -r ${appregex[${program}]} -m ${mainclass[${program}]} -a ${app} -l ${lib} -d ${dyn} -t ${tfx} -o ${outputdir} -j ${jre} 
 
 echo ""

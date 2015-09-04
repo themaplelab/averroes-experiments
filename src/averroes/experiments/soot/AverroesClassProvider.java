@@ -17,7 +17,7 @@ import soot.ClassProvider;
 import soot.ClassSource;
 import soot.CoffiClassSource;
 import soot.coffi.ClassFile;
-import averroes.experiments.util.FileUtils;
+import averroes.experiments.util.Files;
 import averroes.experiments.util.io.Resource;
 import averroes.experiments.util.io.ZipEntryResource;
 
@@ -200,7 +200,7 @@ public class AverroesClassProvider implements ClassProvider {
 	 * @throws IOException
 	 */
 	private List<String> addApplicationArchive() throws IOException {
-		return addArchive(FileUtils.organizedApplicationJarFile(base, benchmark), true);
+		return addArchive(Files.organizedApplicationJarFile(base, benchmark), true);
 	}
 
 	/**
@@ -211,11 +211,11 @@ public class AverroesClassProvider implements ClassProvider {
 	 */
 	private List<String> addLibraryArchive() throws IOException {
 		if (isAve) {
-			List<String> result = addArchive(FileUtils.placeholderLibraryJarFile(base, benchmark), false);
-			result.addAll(addArchive(FileUtils.averroesLibraryClassJarFile(base, benchmark), false));
+			List<String> result = addArchive(Files.placeholderLibraryJarFile(base, benchmark), false);
+			result.addAll(addArchive(Files.averroesLibraryClassJarFile(base, benchmark), false));
 			return result;
 		} else {
-			return addArchive(FileUtils.organizedLibraryJarFile(base, benchmark), false);
+			return addArchive(Files.organizedLibraryJarFile(base, benchmark), false);
 		}
 	}
 

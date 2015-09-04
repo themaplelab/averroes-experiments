@@ -1,82 +1,86 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="tool.jar" basedir=".">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-    	<delete file="tool.jar" />
-        <jar destfile="tool.jar">
-            <manifest>
-                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="averroes.experiments.CallGraphGenerator"/>
-                <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ bcel-5.2.jar java_cup.jar guava-14.0.1.jar slf4j-api-1.7.5.jar slf4j-simple-1.7.5.jar junit.jar org.hamcrest.core_1.3.0.jar polyglot.jar AXMLPrinter2.jar hamcrest-all-1.3.jar junit-4.11.jar asm-debug-all-5.0.3.jar dexlib2-2.0.5-dev.jar util-2.0.5-dev.jar commons-lang3-3.4.jar gxl.jar iris-0.60.jar iris-parser-0.60.jar org.eclipse.core.runtime_3.10.0.v20140318-2214.jar javax.annotation_1.2.0.v201401042248.jar javax.inject_1.0.0.v20091030.jar org.eclipse.osgi_3.10.2.v20150203-1939.jar org.eclipse.equinox.weaving.hook_1.1.100.weaving-hook-20140821.jar org.eclipse.osgi.compatibility.state_1.0.1.v20140709-1414.jar org.eclipse.equinox.common_3.6.200.v20130402-1505.jar org.eclipse.core.jobs_3.6.1.v20141014-1248.jar runtime_registry_compatibility.jar org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar org.eclipse.equinox.app_1.3.200.v20130910-1609.jar org.hamcrest.core_1.3.0.v201303031735.jar ant-antlr.jar ant-apache-bcel.jar ant-apache-bsf.jar ant-apache-log4j.jar ant-apache-oro.jar ant-apache-regexp.jar ant-apache-resolver.jar ant-apache-xalan2.jar ant-commons-logging.jar ant-commons-net.jar ant-jai.jar ant-javamail.jar ant-jdepend.jar ant-jmf.jar ant-jsch.jar ant-junit.jar ant-junit4.jar ant-launcher.jar ant-netrexx.jar ant-swing.jar ant-testutil.jar ant.jar"/>
-            </manifest>
-            <zipfileset src="jar-in-jar-loader.zip"/>
-            <fileset dir="${basedir}/../../averroes-experiments/bin"/>
-            <zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="bcel-5.2.jar"/>
-            <fileset dir="${basedir}/../../soot/classes"/>
-            <fileset dir="${basedir}/../../jasmin/classes"/>
-            <zipfileset dir="${basedir}/../../jasmin/libs" includes="java_cup.jar"/>
-            <fileset dir="${basedir}/../../heros/bin"/>
-            <zipfileset dir="${basedir}/../../heros" includes="guava-14.0.1.jar"/>
-            <zipfileset dir="${basedir}/../../heros" includes="slf4j-api-1.7.5.jar"/>
-            <zipfileset dir="${basedir}/../../heros" includes="slf4j-simple-1.7.5.jar"/>
-            <zipfileset dir="${basedir}/../../heros" includes="junit.jar"/>
-            <zipfileset dir="${basedir}/../../heros" includes="org.hamcrest.core_1.3.0.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="polyglot.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="AXMLPrinter2.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="hamcrest-all-1.3.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="junit-4.11.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="asm-debug-all-5.0.3.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="dexlib2-2.0.5-dev.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="util-2.0.5-dev.jar"/>
-            <zipfileset dir="${basedir}/../../soot/libs" includes="commons-lang3-3.4.jar"/>
-            <fileset dir="${basedir}/../../probe/bin"/>
-            <zipfileset dir="${basedir}/../../probe/lib" includes="gxl.jar"/>
-            <zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="iris-0.60.jar"/>
-            <zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="iris-parser-0.60.jar"/>
-            <fileset dir="${basedir}/../../WALA/com.ibm.wala.util/bin"/>
-            <fileset dir="${basedir}/../../WALA/com.ibm.wala.shrike/bin"/>
-            <fileset dir="${basedir}/../../WALA/com.ibm.wala.core/bin"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.runtime_3.10.0.v20140318-2214.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="javax.annotation_1.2.0.v201401042248.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="javax.inject_1.0.0.v20091030.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.osgi_3.10.2.v20150203-1939.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.weaving.hook_1.1.100.weaving-hook-20140821.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.osgi.compatibility.state_1.0.1.v20140709-1414.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.common_3.6.200.v20130402-1505.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.jobs_3.6.1.v20141014-1248.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.300.v20140128-0851" includes="runtime_registry_compatibility.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.app_1.3.200.v20130910-1609.jar"/>
-            <fileset dir="${basedir}/../../WALA/com.ibm.wala.core.testdata/bin"/>
-            <zipfileset dir="/Applications/eclipse/plugins" includes="org.hamcrest.core_1.3.0.v201303031735.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-antlr.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-bcel.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-bsf.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-log4j.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-oro.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-regexp.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-resolver.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-xalan2.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-commons-logging.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-commons-net.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jai.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-javamail.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jdepend.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jmf.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jsch.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-junit.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-junit4.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-launcher.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-netrexx.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-swing.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-testutil.jar"/>
-            <zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant.jar"/>
-            <fileset dir="${basedir}/../../WALA/com.ibm.wala.core.tests/bin"/>
-            <fileset excludes="averroes.properties" dir="${basedir}/../../averroes/bin"/>
-        </jar>
-    </target>
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<target name="create_run_jar">
+		<delete file="tool.jar" />
+		<jar destfile="tool.jar">
+			<manifest>
+				<attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader" />
+				<attribute name="Rsrc-Main-Class" value="averroes.experiments.CallGraphGenerator" />
+				<attribute name="Class-Path" value="." />
+				<attribute name="Rsrc-Class-Path" value="./ bcel-5.2.jar commons-io-2.4.jar commons-cli-1.3.1.jar scala-library_2.11.6.jar scala-reflect_2.11.6.jar java_cup.jar guava-14.0.1.jar slf4j-api-1.7.5.jar slf4j-simple-1.7.5.jar junit.jar org.hamcrest.core_1.3.0.jar polyglot.jar AXMLPrinter2.jar hamcrest-all-1.3.jar junit-4.11.jar asm-debug-all-5.0.3.jar dexlib2-2.0.5-dev.jar util-2.0.5-dev.jar commons-lang3-3.4.jar gxl.jar iris-0.60.jar iris-parser-0.60.jar org.eclipse.core.runtime_3.10.0.v20140318-2214.jar javax.annotation_1.2.0.v201401042248.jar javax.inject_1.0.0.v20091030.jar org.eclipse.osgi_3.10.2.v20150203-1939.jar org.eclipse.equinox.weaving.hook_1.1.100.weaving-hook-20140821.jar org.eclipse.osgi.compatibility.state_1.0.1.v20140709-1414.jar org.eclipse.equinox.common_3.6.200.v20130402-1505.jar org.eclipse.core.jobs_3.6.1.v20141014-1248.jar runtime_registry_compatibility.jar org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar org.eclipse.equinox.app_1.3.200.v20130910-1609.jar org.hamcrest.core_1.3.0.v201303031735.jar ant-antlr.jar ant-apache-bcel.jar ant-apache-bsf.jar ant-apache-log4j.jar ant-apache-oro.jar ant-apache-regexp.jar ant-apache-resolver.jar ant-apache-xalan2.jar ant-commons-logging.jar ant-commons-net.jar ant-jai.jar ant-javamail.jar ant-jdepend.jar ant-jmf.jar ant-jsch.jar ant-junit.jar ant-junit4.jar ant-launcher.jar ant-netrexx.jar ant-swing.jar ant-testutil.jar ant.jar" />
+			</manifest>
+			<zipfileset src="jar-in-jar-loader.zip" />
+			<fileset dir="${basedir}/../../averroes-experiments/bin" />
+			<zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="bcel-5.2.jar" />
+			<zipfileset dir="${basedir}/../lib" includes="commons-cli-1.3.1.jar" />
+			<zipfileset dir="${basedir}/../lib" includes="commons-io-2.4.jar" />
+			<zipfileset dir="${basedir}/../lib" includes="scala-library_2.11.6.jar" />
+			<zipfileset dir="${basedir}/../lib" includes="scala-reflect_2.11.6.jar" />
+			<fileset dir="${basedir}/../../soot/classes" />
+			<fileset dir="${basedir}/../../jasmin/classes" />
+			<zipfileset dir="${basedir}/../../jasmin/libs" includes="java_cup.jar" />
+			<fileset dir="${basedir}/../../heros/bin" />
+			<zipfileset dir="${basedir}/../../heros" includes="guava-14.0.1.jar" />
+			<zipfileset dir="${basedir}/../../heros" includes="slf4j-api-1.7.5.jar" />
+			<zipfileset dir="${basedir}/../../heros" includes="slf4j-simple-1.7.5.jar" />
+			<zipfileset dir="${basedir}/../../heros" includes="junit.jar" />
+			<zipfileset dir="${basedir}/../../heros" includes="org.hamcrest.core_1.3.0.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="polyglot.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="AXMLPrinter2.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="hamcrest-all-1.3.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="junit-4.11.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="asm-debug-all-5.0.3.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="dexlib2-2.0.5-dev.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="util-2.0.5-dev.jar" />
+			<zipfileset dir="${basedir}/../../soot/libs" includes="commons-lang3-3.4.jar" />
+			<fileset dir="${basedir}/../../probe/bin" />
+			<zipfileset dir="${basedir}/../../probe/lib" includes="gxl.jar" />
+			<zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="iris-0.60.jar" />
+			<zipfileset dir="${basedir}/../../averroes-experiments/lib" includes="iris-parser-0.60.jar" />
+			<fileset dir="${basedir}/../../WALA/com.ibm.wala.util/bin" />
+			<fileset dir="${basedir}/../../WALA/com.ibm.wala.shrike/bin" />
+			<fileset dir="${basedir}/../../WALA/com.ibm.wala.core/bin" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.runtime_3.10.0.v20140318-2214.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="javax.annotation_1.2.0.v201401042248.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="javax.inject_1.0.0.v20091030.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.osgi_3.10.2.v20150203-1939.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.weaving.hook_1.1.100.weaving-hook-20140821.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.osgi.compatibility.state_1.0.1.v20140709-1414.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.common_3.6.200.v20130402-1505.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.jobs_3.6.1.v20141014-1248.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.eclipse.core.runtime.compatibility.registry_3.5.300.v20140128-0851" includes="runtime_registry_compatibility.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.registry_3.5.400.v20140428-1507.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.preferences_3.5.200.v20140224-1527.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.core.contenttype_3.4.200.v20140207-1251.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.eclipse.equinox.app_1.3.200.v20130910-1609.jar" />
+			<fileset dir="${basedir}/../../WALA/com.ibm.wala.core.testdata/bin" />
+			<zipfileset dir="/Applications/eclipse/plugins" includes="org.hamcrest.core_1.3.0.v201303031735.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-antlr.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-bcel.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-bsf.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-log4j.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-oro.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-regexp.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-resolver.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-apache-xalan2.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-commons-logging.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-commons-net.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jai.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-javamail.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jdepend.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jmf.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-jsch.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-junit.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-junit4.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-launcher.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-netrexx.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-swing.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant-testutil.jar" />
+			<zipfileset dir="/Applications/eclipse/plugins/org.apache.ant_1.9.2.v201404171502/lib" includes="ant.jar" />
+			<fileset dir="${basedir}/../../WALA/com.ibm.wala.core.tests/bin" />
+			<fileset excludes="averroes.properties" dir="${basedir}/../../averroes/bin" />
+		</jar>
+	</target>
 </project>

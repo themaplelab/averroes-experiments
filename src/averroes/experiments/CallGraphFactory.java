@@ -6,13 +6,12 @@ import java.util.Iterator;
 import java.util.jar.JarFile;
 
 import probe.CallGraph;
+import averroes.experiments.options.ExperimentsOptions;
 import averroes.experiments.soot.SparkCallGraphTransformer;
 import averroes.experiments.util.CommandExecuter;
-import averroes.experiments.util.FileUtils;
+import averroes.experiments.util.Files;
 import averroes.experiments.util.ProbeUtils;
-import averroes.options.AverroesOptions;
-import averroes.soot.Names;
-import averroes.util.TimeUtils;
+import averroes.experiments.util.TimeUtils;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.JarFileModule;
@@ -103,8 +102,8 @@ public class CallGraphFactory {
 			InterruptedException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException,
 			InvalidClassFileException {
 		// 1. build the call graph
-		String classpath = FileUtils.composeClassPath(FileUtils.organizedApplicationJarFile(base, benchmark),
-				FileUtils.organizedLibraryJarFile(base, benchmark));
+		String classpath = Files.composeClassPath(Files.organizedApplicationJarFile(base, benchmark),
+				Files.organizedLibraryJarFile(base, benchmark));
 
 		String exclusionFile = CallGraphFactory.class.getClassLoader()
 				.getResource(CallGraphTestUtil.REGRESSION_EXCLUSIONS).getPath();
@@ -115,7 +114,7 @@ public class CallGraphFactory {
 		ClassHierarchy cha = ClassHierarchy.make(scope);
 
 		Iterable<Entrypoint> entrypoints = makeMainEntrypoints(scope.getApplicationLoader(), cha, new String[] { "L"
-				+ AverroesOptions.getMainClass().replaceAll("\\.", "/") }, isAve);
+				+ ExperimentsOptions.getMainClass().replaceAll("\\.", "/") }, isAve);
 
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		options.setReflectionOptions(isAve ? ReflectionOptions.NONE
@@ -160,13 +159,13 @@ public class CallGraphFactory {
 
 		// Library stuff
 		scope.addToScope(ClassLoaderReference.Application,
-				new JarFileModule(new JarFile(new File(FileUtils.averroesLibraryClassJarFile(base, benchmark)))));
+				new JarFileModule(new JarFile(Files.averroesLibraryClassJarFile(base, benchmark))));
 		scope.addToScope(ClassLoaderReference.Primordial,
-				new JarFileModule(new JarFile(new File(FileUtils.placeholderLibraryJarFile(base, benchmark)))));
+				new JarFileModule(new JarFile(Files.placeholderLibraryJarFile(base, benchmark))));
 
 		// Application JAR
 		scope.addToScope(ClassLoaderReference.Application,
-				new JarFileModule(new JarFile(new File(FileUtils.organizedApplicationJarFile(base, benchmark)))));
+				new JarFileModule(new JarFile(Files.organizedApplicationJarFile(base, benchmark))));
 
 		return scope;
 	}
@@ -249,7 +248,7 @@ public class CallGraphFactory {
 		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 20)).forEach(System.out::println);
 
 		TypeReference T2 = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName("Laverroes/Library"));
-		MethodReference M2 = MethodReference.findOrCreate(T2, Names.AVERROES_DO_IT_ALL_METHOD_NAME, "()V");
+		MethodReference M2 = MethodReference.findOrCreate(T2, "doItAll", "()V");
 		CGNode N2 = CG.getNodes(M2).iterator().next();
 		System.err.print("callees of node " + getShortName(N2) + " : [");
 		fst = true;

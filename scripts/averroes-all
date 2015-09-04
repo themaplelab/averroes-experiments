@@ -3,8 +3,7 @@
 set -e
 
 base=$1
-tfx=$2
-dyn=$3
+jre=$2
 
 # the dacapo benchmarks
 dacapo=( antlr bloat chart hsqldb luindex lusearch pmd xalan)
@@ -17,18 +16,16 @@ specjvm=( "${specjvm[@]/#/specjvm/}" )
 # put them all in one big array
 benchmarks=( ${dacapo[@]} ${specjvm[@]} )
 
-
 date
 for benchmark in ${benchmarks[@]}
 do
   echo "running averroes on ${benchmark} ..."
-  program=$(basename ${benchmark})
-  outputdir=${base}/benchmarks-averroes/${benchmark}
   
   # 1. create output directory
+  outputdir=${base}/benchmarks-averroes/${benchmark}
   mkdir -p ${outputdir}
   
   # 2. run the script
-  ./averroes ${benchmark} ${base} ${tfx} ${dyn} > ${outputdir}/averroes.log
+  ./averroes ${benchmark} ${base} ${jre} > ${outputdir}/averroes.log
 done
 date

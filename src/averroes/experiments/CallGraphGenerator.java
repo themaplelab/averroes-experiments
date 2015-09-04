@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import probe.CallGraph;
 import probe.TextWriter;
 import averroes.experiments.options.ExperimentsOptions;
+import averroes.experiments.util.Files;
 import averroes.experiments.util.ProbeUtils;
 import averroes.experiments.util.TimeUtils;
 
@@ -23,10 +24,7 @@ public class CallGraphGenerator {
 	public static void main(String[] args) {
 		try {
 			TimeUtils.reset();
-			if (args.length != 5) {
-				usage();
-			}
-
+			
 			// Process the arguments
 			ExperimentsOptions.processArguments(args);
 
@@ -50,7 +48,7 @@ public class CallGraphGenerator {
 
 			// collapse and write the call graph
 			CallGraph cg = ProbeUtils.collapse(probecg);
-			new TextWriter().write(cg, new GZIPOutputStream(new FileOutputStream(FileUtils.callGraphGzipFile())));
+			new TextWriter().write(cg, new GZIPOutputStream(new FileOutputStream(Files.callGraphGzipFile())));
 
 			// Print some statistics
 			System.out.println("=================================================");

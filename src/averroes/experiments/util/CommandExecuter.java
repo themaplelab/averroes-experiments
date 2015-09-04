@@ -1,6 +1,7 @@
 package averroes.experiments.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
@@ -33,11 +34,11 @@ public class CommandExecuter {
 	 */
 	public static boolean runDoop(String doopHome, String base, String benchmark, boolean isAverroes)
 			throws IOException, InterruptedException {
-		String exec = isAverroes ? FileUtils.doopAverroesRunExe(doopHome) : FileUtils.doopRunExe(doopHome);
-		String lib = isAverroes ? FileUtils.placeholderLibraryJarFile(base, benchmark) : FileUtils
+		File exec = isAverroes ? Files.doopAverroesRunExe(doopHome) : Files.doopRunExe(doopHome);
+		File lib = isAverroes ? Files.placeholderLibraryJarFile(base, benchmark) : Files
 				.organizedLibraryJarFile(base, benchmark);
-		String[] cmdArray = { exec, "1.4", ExperimentsOptions.getMainClass(),
-				FileUtils.organizedApplicationJarFile(base, benchmark), lib };
+		String[] cmdArray = { exec.getPath(), ExperimentsOptions.getJreVersion(), ExperimentsOptions.getMainClass(),
+				Files.organizedApplicationJarFile(base, benchmark).getPath(), lib.getPath() };
 		// AverroesProperties.getInputJarFilesForSpark().trim(),
 		// AverroesProperties.getLibraryClassPath().trim() };
 		return run(cmdArray);

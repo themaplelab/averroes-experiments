@@ -2,7 +2,6 @@ package averroes.experiments.soot;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -16,18 +15,11 @@ import soot.G;
 import soot.Kind;
 import soot.Scene;
 import soot.SootClass;
-import soot.SootField;
 import soot.SootMethod;
 import soot.SourceLocator;
 import soot.jimple.spark.SparkTransformer;
-import soot.jimple.spark.pag.AllocNode;
-import soot.jimple.spark.pag.Node;
-import soot.jimple.spark.pag.PAG;
-import soot.jimple.spark.sets.DoublePointsToSet;
-import soot.jimple.spark.sets.P2SetVisitor;
 import soot.options.Options;
-import averroes.options.AverroesOptions;
-import averroes.soot.Names;
+import averroes.experiments.options.ExperimentsOptions;
 
 public class SparkCallGraphTransformer {
 	private AverroesClassProvider provider;
@@ -48,16 +40,16 @@ public class SparkCallGraphTransformer {
 		// Set some soot parameters
 		SourceLocator.v().setClassProviders(Collections.singletonList((ClassProvider) provider));
 		Options.v().classes().addAll(provider.getApplicationClassNames());
-		Options.v().set_main_class(AverroesOptions.getMainClass());
+		Options.v().set_main_class(ExperimentsOptions.getMainClass());
 		Options.v().set_whole_program(true);
 
 		// Dynamic classes are only relevant for the vanilla Spark
 		if (!isAverroes) {
 			addCommonDynamicClasses(provider);
-			Options.v().set_dynamic_class(AverroesOptions.getDynamicClasses());
+			Options.v().set_dynamic_class(ExperimentsOptions.getDynamicApplicationClasses()); // TODO
 		} else {
 			// required since this class is not related to any other class now
-			Options.v().classes().add(Names.AVERROES_LIBRARY_CLASS);
+			Options.v().classes().add("averroes.Library");
 		}
 
 		// Load the necessary classes
@@ -137,7 +129,7 @@ public class SparkCallGraphTransformer {
 		List<SootMethod> result = new ArrayList<SootMethod>();
 		result.add(Scene.v().getMainMethod());
 		if (isAverroes) {
-			result.add(Scene.v().getMethod(Names.AVERROES_LIBRARY_CLINIT_METHOD_SIGNATURE));
+			result.add(Scene.v().getMethod("<averroes.Library: void <clinit>()>"));
 		}
 		return result;
 	}

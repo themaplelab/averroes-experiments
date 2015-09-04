@@ -17,6 +17,7 @@ import probe.ObjectManager;
 import probe.ProbeClass;
 import probe.ProbeMethod;
 import soot.SootMethod;
+import averroes.experiments.options.ExperimentsOptions;
 
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.ipa.callgraph.CGNode;
@@ -470,7 +471,7 @@ public class ProbeUtils {
 	 * @return
 	 */
 	public static boolean isApplicationMethod(ProbeMethod probeMethod) {
-		return AverroesOptions.isApplicationClass(probeMethod.cls());
+		return ExperimentsOptions.isApplicationClass(probeMethod.cls());
 	}
 
 	// public static void main(String[] args) {

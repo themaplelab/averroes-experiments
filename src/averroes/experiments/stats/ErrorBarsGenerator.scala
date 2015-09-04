@@ -82,6 +82,7 @@ object ErrorBarsGenerator {
       total += doopExtractNumber(_ startsWith "loading reflection delta rules...", log)
       total += doopExtractNumber(_ startsWith "loading client delta rules...", log)
       total += doopExtractNumber(_ startsWith "retrieving call graph edges ...", log)
+      if(!isAve) total += doopExtractNumber(_ startsWith "retrieving reflective call graph edges ...", log)
       total += doopExtractNumber(_ startsWith "retrieving entry points ...", log)
 
       val overhead = floatFormat format total
