@@ -10,7 +10,12 @@ object ErrorBarsGenerator {
   final val specjvm = List("compress", "db", "jack", "javac", "jess", "raytrace")
   final val benchmarks = dacapo ++ specjvm
 
+  var base = "???"
+  
   def main(args: Array[String]) = {
+    // base directory
+    base = if (args.nonEmpty) s"all-output-${args(0)}" else "all-output-1.6"
+      
     emitAverroesTime
 
     emitTime(tool = "Spark", isAve = false)
@@ -45,7 +50,7 @@ object ErrorBarsGenerator {
       benchmark = benchmarkFull(prog)
     } {
       val tool = if (isAve) s"doop-averroes" else s"doop"
-      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
+      val log = io.Source.fromFile(s"${base}/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
 
       val analysis = doopExtractNumber(_ startsWith "MBBENCH logicblox START", log)
 
@@ -69,7 +74,7 @@ object ErrorBarsGenerator {
       benchmark = benchmarkFull(prog)
     } {
       val tool = if (isAve) s"doop-averroes" else s"doop"
-      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
+      val log = io.Source.fromFile(s"${base}/$iteration/callgraphs/$benchmark/$tool.log").getLines.toList
 
       var total = 0d
 
@@ -111,7 +116,7 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val analysis = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$filename.log").getLines.toList.find(_ startsWith s"[$tool] Solution found in").get.split(" ").dropRight(1).last.trim.toFloat
+      val analysis = io.Source.fromFile(s"${base}/$iteration/callgraphs/$benchmark/$filename.log").getLines.toList.find(_ startsWith s"[$tool] Solution found in").get.split(" ").dropRight(1).last.trim.toFloat
 
       if (prog != benchmarks.last) print(analysis + "\t")
       else print(analysis + "\n")
@@ -133,7 +138,7 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val log = io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$filename.log").getLines.toList
+      val log = io.Source.fromFile(s"${base}/$iteration/callgraphs/$benchmark/$filename.log").getLines.toList
 
       val analysis = log.find(_ startsWith s"[$tool] Solution found in").get.split(" ").dropRight(1).last.trim.toFloat
       val total = log.find(_ startsWith "Total time to finish").get.split(":").last.trim.toFloat
@@ -160,7 +165,7 @@ object ErrorBarsGenerator {
       benchmark = benchmarkFull(prog)
     } {
       // This is divided by 4 due to a known bug in how the /usr/bin/time command computes the resident memory 
-      var memory = Math.kb2gb(io.Source.fromFile(s"all-output/$iteration/callgraphs/$benchmark/$filename.log").
+      var memory = Math.kb2gb(io.Source.fromFile(s"${base}/$iteration/callgraphs/$benchmark/$filename.log").
         getLines.toList.find(_ startsWith "maximum resident set size: ").get.split(":").last.trim.toLong / 4)
 
       if (prog != benchmarks.last) print(memory + "\t")
@@ -182,7 +187,7 @@ object ErrorBarsGenerator {
       prog <- benchmarks
       benchmark = benchmarkFull(prog)
     } {
-      val log = io.Source.fromFile(s"all-output/$iteration/benchmarks-averroes/$benchmark/averroes.log").getLines.toList
+      val log = io.Source.fromFile(s"${base}/$iteration/benchmarks-averroes/$benchmark/averroes.log").getLines.toList
       val line = log.find(_ startsWith "Total time (without verification)").get
       val averroes = Math.round(extractNumber(line))
 

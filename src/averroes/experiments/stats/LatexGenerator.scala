@@ -59,10 +59,10 @@ object LatexGenerator {
   final val sep = "\t"
   //  final val perChar = "\\%"
 
-  final val freqsout = Map[String, PrintStream](
-    sparkave -> new PrintStream("tex/sparkave.stats"),
-    doopave -> new PrintStream("tex/doopave.stats"),
-    walaave -> new PrintStream("tex/walaave.stats"))
+  lazy val freqsout = Map[String, PrintStream](
+    sparkave -> new PrintStream(s"tex/sparkave-$jre.stats"),
+    doopave -> new PrintStream(s"tex/doopave-$jre.stats"),
+    walaave -> new PrintStream(s"tex/walaave-$jre.stats"))
 
   final val data = collection.mutable.Map[String, Int]()
   final val freqs = Map[String, collection.mutable.Map[String, Map[String, Int]]](
@@ -81,6 +81,7 @@ object LatexGenerator {
     l2a -> "library call back edges")
 
   var base = "???"
+  var jre = "1.6"
 
   def doubleLines(str: String) = {
     val tokens = str.split(';') // should yield 1 or 2 tokens exactly
@@ -209,14 +210,13 @@ object LatexGenerator {
   }
 
   def emitSoundnessTable = {
-    val table = new PrintStream(s"tex/table-$soundness.tex")
-    val base = "stats"
-
+    val table = new PrintStream(s"tex/table-$soundness-jre$jre.tex")
+    
     // Emit Header
     table.println("\\begin{table}")
     table.println("  \\centering")
-    table.println("  \\caption{Comparing the soundness of \\spark, \\doop, and \\wala when analyzing the whole program to using \\ave with respect to the dynamically observed call edges.}")
-    table.println("  \\label{table:soundness}")
+    table.println(s"  \\caption{Comparing the soundness of \\spark, \\doop, and \\wala when analyzing the whole program to using \\ave with respect to the dynamically observed call edges for JRE $jre.}")
+    table.println(s"  \\label{table:soundness:$jre}")
     table.println("  \\resizebox{\\textwidth}{!}{")
     table.println("  \\begin{tabular}{lrrrrrrr}")
     table.println("    \\toprule")
@@ -252,14 +252,14 @@ object LatexGenerator {
   }
   
   def emitPrecisionTable = {
-    val table = new PrintStream(s"tex/table-$imprecision.tex")
+    val table = new PrintStream(s"tex/table-$imprecision-$jre.tex")
     val base = "stats"
 
     // Emit Header
     table.println("\\begin{table}")
     table.println("  \\centering")
-    table.println("  \\caption{Comparing the precision of using \\ave to analyzing the whole program in \\spark, \\doop, and \\wala.}")
-    table.println("  \\label{table:precision}")
+    table.println(s"  \\caption{Comparing the precision of using \\ave to analyzing the whole program in \\spark, \\doop, and \\wala for JRE $jre.}")
+    table.println(s"  \\label{table:precision:$jre}")
     table.println("  \\resizebox{\\textwidth}{!}{")
     table.println("  \\begin{tabular}{lrrrrrr}")
     table.println("    \\toprule")
@@ -292,58 +292,16 @@ object LatexGenerator {
     table.println("\\end{table}")
     table.close
   }
-
-  def emitPrecisionTable(tpe: String) = {
-    val table = new PrintStream(s"tex/table-$imprecision-$tpe.tex")
-    val edFull = edgesFull(tpe)
-
-    // Emit Header
-    table.println("\\begin{table}")
-    table.println("  \\centering")
-    table.println("  \\caption{Comparing the precision of using \\ave to analyzing the whole program in \\spark, \\doop, and \\wala with respect to " + edFull + ".}")
-    table.println("  \\label{table:precision:" + tpe + "}")
-    table.println("  \\resizebox{\\textwidth}{!}{")
-    table.println("  \\begin{tabular}{lrrrrrr}")
-    table.println("    \\toprule")
-    table.println("    & \\multicolumn{2}{c}{\\spark} & \\multicolumn{2}{c}{\\doop} & \\multicolumn{2}{c}{\\wala} \\\\")
-    table.println("    \\cmidrule(l){2-3} \\cmidrule(l){4-5} \\cmidrule(l){6-7}")
-    table.println("    & \\whole & \\mathify{\\ave \\setdiff \\whole} & \\whole & \\mathify{\\ave \\setdiff \\whole} & \\whole & \\mathify{\\ave \\setdiff \\whole} \\\\")
-    table.println("    \\cmidrule(l){2-3} \\cmidrule(l){4-5} \\cmidrule(l){6-7}")
-
-    for (benchmark <- benchmarks) {
-      var row = new StringBuilder("    ")
-
-      // add benchmark name in italics
-      row append s"\\$benchmark"
-
-      // Read the edges info
-      row append s" & ${intFormat(data(countKey(spark, benchmark, tpe)))}"
-      row append s" & ${intFormat(data(imprecisionKey(sparkave, benchmark, tpe)))}"
-      row append s" & ${intFormat(data(countKey(doop, benchmark, tpe)))}"
-      row append s" & ${intFormat(data(imprecisionKey(doopave, benchmark, tpe)))}"
-      row append s" & ${intFormat(data(countKey(wala, benchmark, tpe)))}"
-      row append s" & ${intFormat(data(imprecisionKey(walaave, benchmark, tpe)))}"
-      row append " \\\\"
-      if (benchmark != benchmarks.last) row append " \\midrule" // Midrule except for the last row
-      table.println(row)
-    }
-
-    // Emit Footer
-    table.println("    \\bottomrule")
-    table.println("  \\end{tabular}}")
-    table.println("\\end{table}")
-    table.close
-  }
-
+  
   def emitCGSizeTable = {
-    val table = new PrintStream(s"tex/table-cgsize.tex")
+    val table = new PrintStream(s"tex/table-cgsize-$jre.tex")
     val base = "stats"
 
     // Emit Header
     table.println("\\begin{table}")
     table.println("  \\centering")
-    table.println("  \\caption{Comparing the size of the call graph generated by the \\ave-based tools to \\spark, \\doop, and \\wala in terms of call graph edges.}")
-    table.println("  \\label{table:cgsize}")
+    table.println(s"  \\caption{Comparing the size of the call graph generated by the \\ave-based tools to \\spark, \\doop, and \\wala in terms of call graph edges for JRE $jre.}")
+    table.println(s"  \\label{table:cgsize:$jre}")
     table.println("  \\resizebox{\\textwidth}{!}{")
     table.println("  \\begin{tabular}{lrrrrrr}")
     table.println("    \\toprule")
@@ -380,7 +338,8 @@ object LatexGenerator {
 
   def main(args: Array[String]) = {
     // base directory
-    base = if (args.nonEmpty) s"${args(0)}/callgraphs" else "all-output/1/callgraphs"
+    if (args.nonEmpty) jre = args(0)
+    base = s"all-output-$jre/1/callgraphs"
 
     // First output the data that goes to the numbers spreadsheet
     // Edge counts
@@ -406,9 +365,6 @@ object LatexGenerator {
     // Emit latex files
     emitSoundnessTable
     emitPrecisionTable
-    emitPrecisionTable(a2a)
-    emitPrecisionTable(a2l)
-    emitPrecisionTable(l2a)
     emitCGSizeTable
 
     freqs(sparkave).foreach { m => freqsout(sparkave).println(m._1 + "\t" + benchmarks.map(m._2.getOrElse(_, 0)).mkString("\t")) }

@@ -12,17 +12,19 @@ object FreqsGenerator {
   final val doop = "doop"
   final val wala = "wala"
   
+  var jre = "1.6"
+  
   def intFormat(v: Int) = "%,d" format v
 
   def emitLibraryCallBackSummariesFor(analysis: String) = {
-    val table = new PrintStream(s"tex/table-freqs-${analysis}ave.tex")
+    val table = new PrintStream(s"tex/table-freqs-${analysis}ave-$jre.tex")
     val log = io.Source.fromFile(s"${analysis}ave.stats").getLines.toList.drop(1)
 
     // Emit Header
     table.println("\\begin{table}")
     table.println("  \\centering")
-    table.println("  \\caption{" + s"Frequencies of extra library callback edges computed by \\${analysis}ave compared to \\${analysis}. \\italicize{Other} methods include all methods that are encountered only in one benchmark.}")
-    table.println("  \\label{table:freqs:" + s"${analysis}ave}")
+    table.println("  \\caption{" + s"Frequencies of extra library callback edges computed by \\${analysis}ave compared to \\${analysis} for JRE ${jre}. \\italicize{Other} methods include all methods that are encountered only in one benchmark.}")
+    table.println(s"  \\label{table:freqs:" + s"${analysis}ave}:$jre")
     table.println("  \\resizebox{\\textwidth}{!}{")
     table.println("  \\begin{tabular}{lrrrrrrrrrrrrrr>{\\bfseries}r}")
     table.println("    \\toprule")
@@ -67,6 +69,8 @@ object FreqsGenerator {
   }
   
   def main(args: Array[String]) = {
+    if (args.nonEmpty) jre = args(0)
+    
     emitLibraryCallBackSummariesFor(spark)
     emitLibraryCallBackSummariesFor(doop)
     emitLibraryCallBackSummariesFor(wala)

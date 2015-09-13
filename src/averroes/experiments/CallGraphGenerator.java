@@ -24,21 +24,25 @@ public class CallGraphGenerator {
 	public static void main(String[] args) {
 		try {
 			TimeUtils.reset();
-			
+
 			// Process the arguments
 			ExperimentsOptions.processArguments(args);
 
-			// Create the output directory 
+			// Create the output directory
 			FileUtils.forceMkdir(new File(ExperimentsOptions.getOutputDirectory()));
-			
+
 			CallGraph probecg = null;
 
 			if (ExperimentsOptions.getTool().equalsIgnoreCase("spark")) {
-				probecg = CallGraphFactory.generateSparkCallGraph(ExperimentsOptions.getBaseDirectory(), ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
+				probecg = CallGraphFactory.generateSparkCallGraph(ExperimentsOptions.getBaseDirectory(),
+						ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
 			} else if (ExperimentsOptions.getTool().equalsIgnoreCase("doop")) {
-				probecg = CallGraphFactory.generateDoopCallGraph(ExperimentsOptions.getDoopHome(), ExperimentsOptions.getBaseDirectory(), ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
+				probecg = CallGraphFactory.generateDoopCallGraph(ExperimentsOptions.getDoopHome(),
+						ExperimentsOptions.getBaseDirectory(), ExperimentsOptions.getProgram(),
+						ExperimentsOptions.isAverroes());
 			} else if (ExperimentsOptions.getTool().equalsIgnoreCase("wala")) {
-				probecg = CallGraphFactory.generateWalaCallGraph(ExperimentsOptions.getBaseDirectory(), ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
+				probecg = CallGraphFactory.generateWalaCallGraph(ExperimentsOptions.getBaseDirectory(),
+						ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
 			} else {
 				throw new IllegalStateException(
 						ExperimentsOptions.getTool()
@@ -57,13 +61,5 @@ public class CallGraphGenerator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private static void usage() {
-		System.out.println("");
-		System.out
-				.println("Usage: java -jar tool.jar <absolute_path_to_doop_home> <tool_name> <base> <benchmark> <isAverroes>");
-		System.out.println("");
-		System.exit(1);
 	}
 }
