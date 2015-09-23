@@ -210,7 +210,7 @@ object LatexGenerator {
   }
 
   def emitSoundnessTable = {
-    val table = new PrintStream(s"tex/table-$soundness-jre$jre.tex")
+    val table = new PrintStream(s"tex/table-$soundness-$jre.tex")
     
     // Emit Header
     table.println("\\begin{table}")

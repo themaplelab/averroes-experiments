@@ -43,6 +43,9 @@ public class CallGraphGenerator {
 			} else if (ExperimentsOptions.getTool().equalsIgnoreCase("wala")) {
 				probecg = CallGraphFactory.generateWalaCallGraph(ExperimentsOptions.getBaseDirectory(),
 						ExperimentsOptions.getProgram(), ExperimentsOptions.isAverroes());
+			} else if (ExperimentsOptions.getTool().equalsIgnoreCase("dynamic")) {
+				probecg = CallGraphFactory.generateDynamicCallGraph(ExperimentsOptions.getBaseDirectory(),
+						ExperimentsOptions.getProgram());
 			} else {
 				throw new IllegalStateException(
 						ExperimentsOptions.getTool()

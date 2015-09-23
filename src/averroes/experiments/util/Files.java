@@ -94,4 +94,15 @@ public class Files {
 	public static String composeClassPath(File ... args) {
 		return Arrays.asList(args).stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator));
 	}
+	
+	/**
+	 * Compose a path from the given arguments.
+	 * 
+	 * @param first
+	 * @param more
+	 * @return
+	 */
+	public static String composeClassPath(String ... args) {
+		return Arrays.asList(args).stream().collect(Collectors.joining(File.pathSeparator));
+	}
 }

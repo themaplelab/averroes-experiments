@@ -25,12 +25,20 @@ public final class Benchmarks {
 	 * @return
 	 */
 	public static String getBenchmark(String program) {
-		if (dacapo.contains(program)) {
+		if (isDacapo(program)) {
 			return DaCapo;
-		} else if (specjvm.contains(program)) {
+		} else if (isSpecjvm(program)) {
 			return SpecJvm;
 		} else {
 			throw new RuntimeException("Unknown benchmark for " + program);
 		}
+	}
+	
+	public static boolean isDacapo(String program) {
+		return dacapo.contains(program);
+	}
+	
+	public static boolean isSpecjvm(String program) {
+		return specjvm.contains(program);
 	}
 }

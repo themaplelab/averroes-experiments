@@ -30,6 +30,10 @@ public final class ExperimentsOptions {
 
 	private static List<String> dynamicClasses = null;
 
+	private static final String instrumentedJarLocation = "instrumented.jar";
+
+	private static final String dynamicCallGraphReportLocation = "cg.txt";
+
 	private static Option doopHome = Option.builder("h").longOpt("doop-home")
 			.desc("the location where doop is installed").hasArg().argName("directory").required().build();
 
@@ -83,6 +87,25 @@ public final class ExperimentsOptions {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * The location of the instrumented JAR that WALA produces (for dynamic call
+	 * graph purposes).
+	 * 
+	 * @return
+	 */
+	public static String getInstrumentedJarLocation() {
+		return instrumentedJarLocation;
+	}
+
+	/**
+	 * The location of the dynamic call graph report WALA produces.
+	 * 
+	 * @return
+	 */
+	public static String getDynamicCallGraphReportLocation() {
+		return dynamicCallGraphReportLocation;
 	}
 
 	/**
