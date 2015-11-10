@@ -11,8 +11,8 @@ import java.util.List;
  */
 public final class Benchmarks {
 
-	private static String DaCapo = "dacapo";
-	private static String SpecJvm = "specjvm";
+	public static String DaCapo = "dacapo";
+	public static String SpecJvm = "specjvm";
 
 	private static List<String> dacapo = Arrays.asList("antlr", "bloat", "chart", "hsqldb", "luindex", "lusearch",
 			"pmd", "xalan");

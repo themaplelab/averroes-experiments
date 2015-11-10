@@ -182,7 +182,7 @@ public class CallGraphFactory {
 	private static void instrument(String base, String benchmark) throws ClassNotFoundException, IOException,
 			InvalidClassFileException, FailureException {
 		System.out.println("Instrumenting appJar ...");
-		OfflineDynamicCallGraph.main(new String[] { Files.organizedApplicationJarFile(base, benchmark).getPath(), "-o",
+		OfflineDynamicCallGraph.main(new String[] { Files.applicationJarFile(base, benchmark).getPath(), "-o",
 				ExperimentsOptions.getInstrumentedJarLocation() });
 		Assertions.productionAssertion(new File(ExperimentsOptions.getInstrumentedJarLocation()).exists(),
 				"expected to create instrumented.jar");
@@ -263,8 +263,7 @@ public class CallGraphFactory {
 			toolJar = new File("tool.jar").getCanonicalPath();
 		}
 
-		return Files.composeClassPath(instrumented, Files.organizedLibraryJarFile(base, benchmark).getCanonicalPath(),
-				toolJar);
+		return Files.composeClassPath(instrumented, Files.libraryPath(base, benchmark), toolJar);
 	}
 
 	private static SSAPropagationCallGraphBuilder makeZeroOneCFABuilder(AnalysisOptions options, AnalysisCache cache,

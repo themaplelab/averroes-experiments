@@ -26,6 +26,40 @@ public class Files {
 	}
 
 	/**
+	 * Get the original JAR file for a benchmark
+	 * 
+	 * @param base
+	 * @param program
+	 * @return
+	 */
+	public static File applicationJarFile(String base, String program) {
+		String benchmark = Benchmarks.getBenchmark(program);
+		String extension = Benchmarks.isDacapo(program) ? ".jar" : ".zip";
+		return Paths.get(base, "benchmarks", benchmark, program + extension).toFile();
+	}
+
+	/**
+	 * Get the original JAR file for a benchmark dependency
+	 * 
+	 * @param base
+	 * @param program
+	 * @return
+	 */
+	public static String libraryPath(String base, String program) {
+		String benchmark = Benchmarks.getBenchmark(program);
+
+		if (Benchmarks.isDacapo(program)) {
+			return Paths.get(base, "benchmarks", benchmark, program + "-deps.jar").toFile().getPath();
+		} else if (Benchmarks.isSpecjvm(program)) {
+			File spec = Paths.get(base, "benchmarks", benchmark, "spec.zip").toFile();
+			File sun = Paths.get(base, "benchmarks", benchmark, "sunrsasign.jar").toFile();
+			return composeClassPath(spec, sun);
+		} else {
+			throw new RuntimeException("Unknown benchmark program " + program);
+		}
+	}
+
+	/**
 	 * The path to the organized application JAR file of a benchmark program.
 	 * 
 	 * @return
@@ -91,10 +125,10 @@ public class Files {
 	 * @param more
 	 * @return
 	 */
-	public static String composeClassPath(File ... args) {
+	public static String composeClassPath(File... args) {
 		return Arrays.asList(args).stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator));
 	}
-	
+
 	/**
 	 * Compose a path from the given arguments.
 	 * 
@@ -102,7 +136,7 @@ public class Files {
 	 * @param more
 	 * @return
 	 */
-	public static String composeClassPath(String ... args) {
+	public static String composeClassPath(String... args) {
 		return Arrays.asList(args).stream().collect(Collectors.joining(File.pathSeparator));
 	}
 }

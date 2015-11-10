@@ -10,3 +10,6 @@
 /.cache-main
 /.DS_Store
 /dumps/
+/cg.txt
+/instrumented.jar
+/report
