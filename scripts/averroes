@@ -79,6 +79,19 @@ echo "running averroes on ${benchmark} ..."
 mkdir -p ${outputdir}
   
 # 2. run Averroes
-java -jar averroes.jar -r ${appregex[${program}]} -m ${mainclass[${program}]} -a ${app} -l ${lib} -d ${dyn} -t ${tfx} -o ${outputdir} -j ${jre} 
+java -jar averroes.jar -r ${appregex[${program}]} -m ${mainclass[${program}]} -a ${app} -l ${lib} -d ${dyn} -t ${tfx} -o ${outputdir} -j ${jre}
+
+# 3. output some stats about JAR files
+# original app size
+app_size=$(unzip -l ${outputdir}/organized-app.jar | tail -n 1 | awk '{print $1;}')
+echo "Original application size is ${app_size} bytes."
+
+# original lib size
+lib_size=$(unzip -l ${outputdir}/organized-lib.jar | tail -n 1 | awk '{print $1;}')
+echo "Original library size is ${lib_size} bytes."
+
+# placeholder lib size
+place_lib_size=$(unzip -l ${outputdir}/placeholder-lib.jar | tail -n 1 | awk '{print $1;}')
+echo "Placeholder library size is ${place_lib_size} bytes."  
 
 echo ""
