@@ -94,12 +94,19 @@ echo "Original library size is ${lib_size} bytes."
 place_lib_size=$(unzip -l ${outputdir}/placeholder-lib.jar | tail -n 1 | awk '{print $1;}')
 echo "Placeholder library size is ${place_lib_size} bytes."
 
+# averroes class lib size
+ave_lib_size=$(unzip -l ${outputdir}/averroes-lib-class.jar | tail -n 1 | awk '{print $1;}')
+echo "Averroes library class size is ${ave_lib_size} bytes."
+
 # 4. output some stats about methods
 orig_lib_methods=$(javap -p -bootclasspath ${outputdir}/organized-lib.jar $(jar -tf ${outputdir}/organized-lib.jar | grep "class$" | sed s/\.class$//) | grep '(\|static {' | wc -l)
 echo "Number of original library methods is ${orig_lib_methods}."
 
 place_lib_methods=$(javap -p -bootclasspath ${outputdir}/placeholder-lib.jar $(jar -tf ${outputdir}/placeholder-lib.jar | grep "class$" | sed s/\.class$//) | grep '(\|static {' | wc -l)
 echo "Number of placeholder library methods is ${place_lib_methods}."
+
+ave_lib_methods=$(javap -p -bootclasspath ${outputdir}/averroes-lib-class.jar $(jar -tf ${outputdir}/averroes-lib-class.jar | grep "class$" | sed s/\.class$//) | grep '(\|static {' | wc -l)
+echo "Number of Averroes library class methods is ${ave_lib_methods}."
   
 
 echo ""
