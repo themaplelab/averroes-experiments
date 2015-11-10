@@ -210,6 +210,9 @@ public class CallGraphFactory {
 		cmd.add("-DdynamicCGFilter=" + tmpFile.getCanonicalPath());
 		System.setProperty("dynamicCGFilter", tmpFile.getCanonicalPath());
 
+		// Add the -noverify command line option to avoid error with stackmaps for specjvm/raytrace
+		cmd.add("-noverify");
+		
 		// Add the main class
 		cmd.add(ExperimentsOptions.getMainClass());
 
@@ -219,11 +222,10 @@ public class CallGraphFactory {
 		}
 
 		// Convert cmd to an array
-		String[] cmdarray = cmd.toArray(new String[0]);
 		System.out.println();
-		System.out.println("Spawning process " + Arrays.toString(cmdarray));
+		System.out.println("Spawning process " + cmd);
 
-		ProcessBuilder pb = new ProcessBuilder(cmdarray);
+		ProcessBuilder pb = new ProcessBuilder(cmd);
 		pb.redirectErrorStream(true);
 
 		// Start the process and capture the output.

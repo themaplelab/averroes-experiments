@@ -1,14 +1,13 @@
 package averroes.experiments.stats
 
-import java.io.FileInputStream
 import java.io.PrintStream
-import java.text.DecimalFormat
-import java.util.zip.GZIPInputStream
+
 import scala.collection.JavaConversions.asScalaSet
-import probe.TextReader
+
+import averroes.experiments.util.Math
 import averroes.experiments.util.ProbeUtils
 import probe.CallEdge
-import probe.ObjectManager
+import probe.TextReader
 
 object LatexGenerator {
   // The benchmarks
@@ -48,7 +47,8 @@ object LatexGenerator {
 
   // Formatting
   //  final lazy val floatFormat = new DecimalFormat("#,###.#")
-  def intFormat(v: Int) = "%,d" format v
+  def intFormat(v: Int): String = "%,d" format v
+  def intFormat(v: String): String = intFormat(v.toInt)
   //  def perFormat(v: String) = "%5s" format v
 
   // keys for table of differences
@@ -81,6 +81,7 @@ object LatexGenerator {
     l2a -> "library call back edges")
 
   var base = "???"
+  var avebase = "???"
   var jre = "1.6"
 
   def doubleLines(str: String) = {
@@ -335,11 +336,83 @@ object LatexGenerator {
     table.println("\\end{table}")
     table.close
   }
+  
+  def emitJarSizes = {
+    val title = "Jar Files"
+    println(title)
+    println("=" * title.length)
+
+    for {
+      tool <- List("App", "Lib", "Placeholder", "Ave")
+      prog <- benchmarks
+      benchmark = benchmarkFull(prog)
+    } {
+      val log = io.Source.fromFile(s"${avebase}/$benchmark/averroes.log").getLines.toList
+       
+      if (prog != benchmarks.last) print(extractSize + "\t")
+      else print(extractSize + "\n")
+      
+      def extractSize = {
+        if(tool == "App") {
+          val line = log.find(_ startsWith "Original application size").get
+          Math.b2mb(extractNumber(line))
+        } else if(tool == "Lib") {
+          val line = log.find(_ startsWith "Original library size").get
+          Math.b2mb(extractNumber(line))
+        } else if(tool == "Placeholder") {
+          val line = log.find(_ startsWith "Placeholder library size").get
+          Math.b2mb(extractNumber(line))
+        } else {
+          val line = log.find(_ startsWith "Averroes library class size").get
+          Math.b2mb(extractNumber(line))
+        }
+      }
+    }
+
+    println
+    println
+  }
+  
+  def emitMethodCounts = {
+    val title = "Method Counts"
+    println(title)
+    println("=" * title.length)
+
+    for {
+      tool <- List("Lib", "Placeholder", "Ave")
+      prog <- benchmarks
+      benchmark = benchmarkFull(prog)
+    } {
+      val log = io.Source.fromFile(s"${avebase}/$benchmark/averroes.log").getLines.toList
+       
+      if (prog != benchmarks.last) print(extractSize + "\t")
+      else print(extractSize + "\n")
+      
+      def extractSize = {
+        if(tool == "Lib") {
+          val line = log.find(_ startsWith "Number of original library methods").get
+          intFormat(extractNumber(line))
+        } else if(tool == "Placeholder") {
+          val line = log.find(_ startsWith "Number of placeholder library methods").get
+          intFormat(extractNumber(line))
+        } else {
+          val line = log.find(_ startsWith "Number of Averroes library class methods").get
+          intFormat(extractNumber(line))
+        }
+      }
+    }
+
+    println
+    println
+  }
+  
+  def extractNumber(line: String) = "\\d+(.\\d+)?".r.findFirstMatchIn(line).get.matched
 
   def main(args: Array[String]) = {
     // base directory
     if (args.nonEmpty) jre = args(0)
     base = s"all-output-$jre/1/callgraphs"
+    avebase = base.replace("callgraphs", "benchmarks-averroes")
 
     // First output the data that goes to the numbers spreadsheet
     // Edge counts
@@ -361,6 +434,12 @@ object LatexGenerator {
     emitPrecisionSoundComparison("PrecisionSound::A2A", a2aFilter, a2a)
     emitPrecisionSoundComparison("PrecisionSound::A2L", a2lFilter, a2l)
     emitPrecisionSoundComparison("PrecisionSound::L2A", l2aFilter, l2a)
+    
+    // JAR sizes
+    emitJarSizes
+    
+    // Method counts
+    emitMethodCounts
 
     // Emit latex files
     emitSoundnessTable
