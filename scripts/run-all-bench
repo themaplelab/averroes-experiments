@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+
+set -e
+
+jre=$1
+benchmark=$2
+
+date
+for i in {1..10}
+do
+  base=all-output-${jre}/${i}
+  echo "running for the ${i}th time!"
+  ./averroes ${benchmark} ${base} ${jre} > ${base}/benchmarks-averroes/${benchmark}/averroes.log
+  ./run-benchmark ${benchmark} ${base} ${jre}
+  echo " "
+  echo " "
+  echo " "
+  echo " "
+  echo " "
+done
+date
