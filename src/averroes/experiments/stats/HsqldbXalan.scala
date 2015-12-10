@@ -10,12 +10,10 @@ import probe.TextReader
 
 object HsqldbXalan {
 
-  var base = "???"
+  val base = "all-output/1/callgraphs"
 
   final val tools = List("spark-averroes", "doop-averroes", "wala-averroes")
 
-//  def a2aFilter(e: CallEdge) = e.src != ProbeUtils.LIBRARY_BLOB && e.dst != ProbeUtils.LIBRARY_BLOB
-//  def a2lFilter(e: CallEdge) = e.src != ProbeUtils.LIBRARY_BLOB && e.dst == ProbeUtils.LIBRARY_BLOB
   def l2aFilter(e: CallEdge) = e.src == ProbeUtils.LIBRARY_BLOB && e.dst != ProbeUtils.LIBRARY_BLOB
 
   def emit(title: String, pkgs: List[String]) = {
@@ -57,9 +55,6 @@ object HsqldbXalan {
   }
 
   def main(args: Array[String]) = {
-    // base directory
-    base = if (args.nonEmpty) s"${args(0)}/callgraphs" else "all-output/1/callgraphs"
-
     // Precision
     emit("dacapo/hsqldb", List[String]("org.hsqldb.jdbc"))
     emit("dacapo/xalan", List[String]("org.apache.xalan", "org.apache.xml"))

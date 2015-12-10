@@ -10,12 +10,9 @@ object ErrorBarsGenerator {
   final val specjvm = List("compress", "db", "jack", "javac", "jess", "raytrace")
   final val benchmarks = dacapo ++ specjvm
 
-  var base = "???"
+  val base = "all-output-1.6"
   
-  def main(args: Array[String]) = {
-    // base directory
-    base = if (args.nonEmpty) s"all-output-${args(0)}" else "all-output-1.6"
-      
+  def main(args: Array[String]) = {      
     emitAverroesTime
 
     emitTime(tool = "Spark", isAve = false)
