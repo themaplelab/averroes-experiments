@@ -159,6 +159,7 @@ public class ProbeUtils {
 				new FileInputStream(dynamicCGFile))));
 		probe.CallGraph probecg = new CallGraph();
 		String line;
+		
 		while ((line = dynamicEdgesFile.readLine()) != null) {
 			StringTokenizer edge = new StringTokenizer(line, "\t");
 			String callerClass = edge.nextToken();
@@ -174,6 +175,28 @@ public class ProbeUtils {
 				String cls = edge.nextToken().replaceAll("/", ".");
 				String subSig = edge.nextToken();
 				probecg.edges().add(new CallEdge(LIBRARY_BLOB, probeMethod(cls, subSig)));
+			} else if (line.startsWith("call to ")){
+				// Mark the reset point and read the next line
+				dynamicEdgesFile.mark(1000);
+				String next = dynamicEdgesFile.readLine();
+				
+				/* 
+				 * Read the next line, if it's "return from", that means we are
+				 * calling into the standard library and should generate an edge
+				 * to the library blob. Otherwise, put back whatever bytes we 
+				 * previously read and continue processing the file. 
+				 */
+				if(next != null && next.startsWith("return from ")) {
+					// generate edge to library blob
+					line = line.replace("call to ", "");
+					StringTokenizer cs = new StringTokenizer(line, "\t");
+					String cls = cs.nextToken();
+					String subSig = cs.nextToken();
+					probecg.edges().add(new CallEdge(probeMethod(cls, subSig), LIBRARY_BLOB));
+				} else {
+					dynamicEdgesFile.reset();
+				}
+				
 			} else { // a normal edge
 				String callerSubSig = edge.nextToken();
 				String calleeClass = edge.nextToken().replaceAll("/", ".");

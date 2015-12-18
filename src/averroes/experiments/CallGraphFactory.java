@@ -69,10 +69,12 @@ public class CallGraphFactory {
 	 * @return
 	 * @throws IOException
 	 */
-	public static CallGraph generateSparkCallGraph(String base, String benchmark, boolean isAverroes)
-			throws IOException {
-		CallGraph spark = new SparkCallGraphTransformer(base, benchmark, isAverroes).getProbeCallGraph();
-		System.out.println("size of original spark is: " + spark.edges().size());
+	public static CallGraph generateSparkCallGraph(String base,
+			String benchmark, boolean isAverroes) throws IOException {
+		CallGraph spark = new SparkCallGraphTransformer(base, benchmark,
+				isAverroes).getProbeCallGraph();
+		System.out
+				.println("size of original spark is: " + spark.edges().size());
 		return spark;
 	}
 
@@ -85,8 +87,9 @@ public class CallGraphFactory {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public static CallGraph generateDoopCallGraph(String doopHome, String base, String benchmark, boolean isAverroes)
-			throws IOException, InterruptedException {
+	public static CallGraph generateDoopCallGraph(String doopHome, String base,
+			String benchmark, boolean isAverroes) throws IOException,
+			InterruptedException {
 		// 1. Run doop's analysis
 		CommandExecuter.runDoop(doopHome, base, benchmark, isAverroes);
 
@@ -106,35 +109,47 @@ public class CallGraphFactory {
 	 * @throws IllegalArgumentException
 	 * @throws InvalidClassFileException
 	 */
-	public static CallGraph generateWalaCallGraph(String base, String benchmark, boolean isAve) throws IOException,
-			InterruptedException, ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException,
+	public static CallGraph generateWalaCallGraph(String base,
+			String benchmark, boolean isAve) throws IOException,
+			InterruptedException, ClassHierarchyException,
+			IllegalArgumentException, CallGraphBuilderCancelException,
 			InvalidClassFileException {
 		// 1. build the call graph
-		String classpath = Files.composeClassPath(Files.organizedApplicationJarFile(base, benchmark),
+		String classpath = Files.composeClassPath(
+				Files.organizedApplicationJarFile(base, benchmark),
 				Files.organizedLibraryJarFile(base, benchmark));
 
 		String exclusionFile = CallGraphFactory.class.getClassLoader()
 				.getResource(CallGraphTestUtil.REGRESSION_EXCLUSIONS).getPath();
 
-		AnalysisScope scope = isAve ? makeAverroesAnalysisScope(base, benchmark) : AnalysisScopeReader
-				.makeJavaBinaryAnalysisScope(classpath, new File(exclusionFile));
+		AnalysisScope scope = isAve ? makeAverroesAnalysisScope(base, benchmark)
+				: AnalysisScopeReader.makeJavaBinaryAnalysisScope(classpath,
+						new File(exclusionFile));
 
 		ClassHierarchy cha = ClassHierarchy.make(scope);
 
-		Iterable<Entrypoint> entrypoints = makeMainEntrypoints(scope.getApplicationLoader(), cha, new String[] { "L"
-				+ ExperimentsOptions.getMainClass().replaceAll("\\.", "/") }, isAve);
+		Iterable<Entrypoint> entrypoints = makeMainEntrypoints(
+				scope.getApplicationLoader(),
+				cha,
+				new String[] { "L"
+						+ ExperimentsOptions.getMainClass().replaceAll("\\.",
+								"/") }, isAve);
 
 		AnalysisOptions options = new AnalysisOptions(scope, entrypoints);
 		options.setReflectionOptions(isAve ? ReflectionOptions.NONE
 				: ReflectionOptions.MULTI_FLOW_TO_CASTS_APPLICATION_GET_METHOD);
 		options.setHandleZeroLengthArray(isAve ? false : true);
 
-		SSAPropagationCallGraphBuilder builder = isAve ? makeZeroOneCFABuilder(options, new AnalysisCache(), cha,
-				scope, null, null) : Util.makeZeroOneCFABuilder(options, new AnalysisCache(), cha, scope, null, null);
+		SSAPropagationCallGraphBuilder builder = isAve ? makeZeroOneCFABuilder(
+				options, new AnalysisCache(), cha, scope, null, null) : Util
+				.makeZeroOneCFABuilder(options, new AnalysisCache(), cha,
+						scope, null, null);
 
 		TimeUtils.splitStart();
-		BasicCallGraph<?> cg = (BasicCallGraph<?>) builder.makeCallGraph(options, null);
-		System.out.println("[Wala] Solution found in " + TimeUtils.elapsedSplitTime() + " seconds.");
+		BasicCallGraph<?> cg = (BasicCallGraph<?>) builder.makeCallGraph(
+				options, null);
+		System.out.println("[Wala] Solution found in "
+				+ TimeUtils.elapsedSplitTime() + " seconds.");
 
 		// dumpCG(scope.getApplicationLoader(), builder.getPointerAnalysis(),
 		// cg);
@@ -156,16 +171,19 @@ public class CallGraphFactory {
 	 * @throws InterruptedException
 	 * @throws WalaException
 	 */
-	public static CallGraph generateDynamicCallGraph(String base, String benchmark) throws ClassNotFoundException,
-			IOException, InvalidClassFileException, FailureException, WalaException, InterruptedException {
+	public static CallGraph generateDynamicCallGraph(String base,
+			String benchmark) throws ClassNotFoundException, IOException,
+			InvalidClassFileException, FailureException, WalaException,
+			InterruptedException {
 		// Instrument the input app
 		instrument(base, benchmark);
 
 		// Execute the instrumented app
-		exec(base, benchmark,
-				CallGraphFactory.class.getClassLoader().getResource(CallGraphTestUtil.REGRESSION_EXCLUSIONS).getPath());
+		exec(base, benchmark, CallGraphFactory.class.getClassLoader()
+				.getResource(CallGraphTestUtil.REGRESSION_EXCLUSIONS).getPath());
 
-		return ProbeUtils.convertWalaDynamicCallGraph(ExperimentsOptions.getDynamicCallGraphReportLocation());
+		return ProbeUtils.convertWalaDynamicCallGraph(ExperimentsOptions
+				.getDynamicCallGraphReportLocation());
 	}
 
 	/**
@@ -179,14 +197,19 @@ public class CallGraphFactory {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private static void instrument(String base, String benchmark) throws ClassNotFoundException, IOException,
+	private static void instrument(String base, String benchmark)
+			throws ClassNotFoundException, IOException,
 			InvalidClassFileException, FailureException {
 		System.out.println("Instrumenting appJar ...");
-		OfflineDynamicCallGraph.main(new String[] { Files.applicationJarFile(base, benchmark).getPath(), "-o",
-				ExperimentsOptions.getInstrumentedJarLocation() });
-		Assertions.productionAssertion(new File(ExperimentsOptions.getInstrumentedJarLocation()).exists(),
-				"expected to create instrumented.jar");
-		System.out.println("Instrumented jar is available at " + ExperimentsOptions.getInstrumentedJarLocation());
+		OfflineDynamicCallGraph.main(new String[] {
+				Files.applicationJarFile(base, benchmark).getPath(), "-o",
+				ExperimentsOptions.getInstrumentedJarLocation(),
+				"--patch-calls" });
+		Assertions.productionAssertion(
+				new File(ExperimentsOptions.getInstrumentedJarLocation())
+						.exists(), "expected to create instrumented.jar");
+		System.out.println("Instrumented jar is available at "
+				+ ExperimentsOptions.getInstrumentedJarLocation());
 	}
 
 	/**
@@ -199,20 +222,28 @@ public class CallGraphFactory {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	private static void exec(String base, String benchmark, String exclusionsFile) throws IOException, WalaException,
+	private static void exec(String base, String benchmark,
+			String exclusionsFile) throws IOException, WalaException,
 			InterruptedException {
-		ArrayList<String> cmd = new ArrayList<String>(Arrays.asList("java", "-cp", composeClasspath(base, benchmark),
-				"-DdynamicCGFile=" + ExperimentsOptions.getDynamicCallGraphReportLocation()));
-		System.setProperty("dynamicCGFile", ExperimentsOptions.getDynamicCallGraphReportLocation());
+		ArrayList<String> cmd = new ArrayList<String>(Arrays.asList(
+				"java",
+				"-cp",
+				composeClasspath(base, benchmark),
+				"-DdynamicCGFile="
+						+ ExperimentsOptions
+								.getDynamicCallGraphReportLocation()));
+		System.setProperty("dynamicCGFile",
+				ExperimentsOptions.getDynamicCallGraphReportLocation());
 
 		// Add the system property dynamicCGFilter
 		File tmpFile = new File(exclusionsFile);
 		cmd.add("-DdynamicCGFilter=" + tmpFile.getCanonicalPath());
 		System.setProperty("dynamicCGFilter", tmpFile.getCanonicalPath());
 
-		// Add the -noverify command line option to avoid error with stackmaps for specjvm/raytrace
+		// Add the -noverify command line option to avoid error with stackmaps
+		// for specjvm/raytrace
 		cmd.add("-noverify");
-		
+
 		// Add the main class
 		cmd.add(ExperimentsOptions.getMainClass());
 
@@ -230,7 +261,8 @@ public class CallGraphFactory {
 
 		// Start the process and capture the output.
 		Process p = pb.start();
-		BufferedReader stdout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+		BufferedReader stdout = new BufferedReader(new InputStreamReader(
+				p.getInputStream()));
 		String line;
 		while ((line = stdout.readLine()) != null) {
 			System.out.println(line);
@@ -241,8 +273,11 @@ public class CallGraphFactory {
 		p.waitFor();
 
 		// Test that the dynamic call graph report has been generated.
-		Assertions.productionAssertion(new File(ExperimentsOptions.getDynamicCallGraphReportLocation()).exists(),
-				"expected to create call graph");
+		Assertions
+				.productionAssertion(
+						new File(ExperimentsOptions
+								.getDynamicCallGraphReportLocation()).exists(),
+						"expected to create call graph");
 	}
 
 	/**
@@ -254,9 +289,13 @@ public class CallGraphFactory {
 	 * @throws IOException
 	 * @throws WalaException
 	 */
-	private static String composeClasspath(String base, String benchmark) throws IOException, WalaException {
-		String instrumented = new File(ExperimentsOptions.getInstrumentedJarLocation()).getCanonicalPath();
-		String toolJar = CallGraphFactory.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+	private static String composeClasspath(String base, String benchmark)
+			throws IOException, WalaException {
+		String instrumented = new File(
+				ExperimentsOptions.getInstrumentedJarLocation())
+				.getCanonicalPath();
+		String toolJar = CallGraphFactory.class.getProtectionDomain()
+				.getCodeSource().getLocation().getPath();
 
 		// check if we're running from within eclipse => path will be ./bin
 		if (toolJar.endsWith("/bin/")) {
@@ -265,11 +304,13 @@ public class CallGraphFactory {
 			toolJar = new File("tool.jar").getCanonicalPath();
 		}
 
-		return Files.composeClassPath(instrumented, Files.libraryPath(base, benchmark), toolJar);
+		return Files.composeClassPath(instrumented,
+				Files.libraryPath(base, benchmark), toolJar);
 	}
 
-	private static SSAPropagationCallGraphBuilder makeZeroOneCFABuilder(AnalysisOptions options, AnalysisCache cache,
-			IClassHierarchy cha, AnalysisScope scope, ContextSelector customSelector,
+	private static SSAPropagationCallGraphBuilder makeZeroOneCFABuilder(
+			AnalysisOptions options, AnalysisCache cache, IClassHierarchy cha,
+			AnalysisScope scope, ContextSelector customSelector,
 			SSAContextInterpreter customInterpreter) {
 
 		if (options == null) {
@@ -277,35 +318,44 @@ public class CallGraphFactory {
 		}
 		Util.addDefaultSelectors(options, cha);
 
-		return ZeroXCFABuilder.make(cha, options, cache, customSelector, customInterpreter,
-				ZeroXInstanceKeys.ALLOCATIONS | ZeroXInstanceKeys.SMUSH_MANY
-						| ZeroXInstanceKeys.SMUSH_PRIMITIVE_HOLDERS | ZeroXInstanceKeys.SMUSH_STRINGS
+		return ZeroXCFABuilder.make(cha, options, cache, customSelector,
+				customInterpreter, ZeroXInstanceKeys.ALLOCATIONS
+						| ZeroXInstanceKeys.SMUSH_MANY
+						| ZeroXInstanceKeys.SMUSH_PRIMITIVE_HOLDERS
+						| ZeroXInstanceKeys.SMUSH_STRINGS
 						| ZeroXInstanceKeys.SMUSH_THROWABLES);
 	}
 
-	private static AnalysisScope makeAverroesAnalysisScope(String base, String benchmark) throws IOException,
-			IllegalArgumentException, InvalidClassFileException {
+	private static AnalysisScope makeAverroesAnalysisScope(String base,
+			String benchmark) throws IOException, IllegalArgumentException,
+			InvalidClassFileException {
 		AnalysisScope scope = AnalysisScope.createJavaAnalysisScope();
 
 		// There should be no exclusions when using Averroes
 		// scope.setExclusions(new FileOfClasses(fs));
 
 		// Library stuff
-		scope.addToScope(ClassLoaderReference.Application,
-				new JarFileModule(new JarFile(Files.averroesLibraryClassJarFile(base, benchmark))));
-		scope.addToScope(ClassLoaderReference.Primordial,
-				new JarFileModule(new JarFile(Files.placeholderLibraryJarFile(base, benchmark))));
+		scope.addToScope(
+				ClassLoaderReference.Application,
+				new JarFileModule(new JarFile(Files
+						.averroesLibraryClassJarFile(base, benchmark))));
+		scope.addToScope(ClassLoaderReference.Primordial, new JarFileModule(
+				new JarFile(Files.placeholderLibraryJarFile(base, benchmark))));
 
 		// Application JAR
-		scope.addToScope(ClassLoaderReference.Application,
-				new JarFileModule(new JarFile(Files.organizedApplicationJarFile(base, benchmark))));
+		scope.addToScope(
+				ClassLoaderReference.Application,
+				new JarFileModule(new JarFile(Files
+						.organizedApplicationJarFile(base, benchmark))));
 
 		return scope;
 	}
 
-	private static Iterable<Entrypoint> makeMainEntrypoints(final ClassLoaderReference loaderRef,
-			final IClassHierarchy cha, final String[] classNames, boolean isAve) throws IllegalArgumentException,
-			IllegalArgumentException, IllegalArgumentException {
+	private static Iterable<Entrypoint> makeMainEntrypoints(
+			final ClassLoaderReference loaderRef, final IClassHierarchy cha,
+			final String[] classNames, boolean isAve)
+			throws IllegalArgumentException, IllegalArgumentException,
+			IllegalArgumentException {
 		return new Iterable<Entrypoint>() {
 			@Override
 			public Iterator<Entrypoint> iterator() {
@@ -322,26 +372,39 @@ public class CallGraphFactory {
 
 					@Override
 					public boolean hasNext() {
-						return index < classNames.length || (isAve && !clinitTaken);
+						return index < classNames.length
+								|| (isAve && !clinitTaken);
 					}
 
 					@Override
 					public Entrypoint next() {
 						if (index < classNames.length) {
-							TypeReference T = TypeReference.findOrCreate(loaderRef,
-									TypeName.string2TypeName(classNames[index++]));
-							MethodReference mainRef = MethodReference.findOrCreate(T, mainMethod,
-									Descriptor.findOrCreateUTF8("([Ljava/lang/String;)V"));
+							TypeReference T = TypeReference
+									.findOrCreate(
+											loaderRef,
+											TypeName.string2TypeName(classNames[index++]));
+							MethodReference mainRef = MethodReference
+									.findOrCreate(
+											T,
+											mainMethod,
+											Descriptor
+													.findOrCreateUTF8("([Ljava/lang/String;)V"));
 							return new DefaultEntrypoint(mainRef, cha);
 						} else if (isAve && !clinitTaken) {
 							clinitTaken = true;
-							TypeReference T = TypeReference.findOrCreate(loaderRef,
-									TypeName.string2TypeName("Laverroes/Library"));
-							MethodReference clinitRef = MethodReference.findOrCreate(T, MethodReference.clinitName,
-									MethodReference.clinitSelector.getDescriptor());
+							TypeReference T = TypeReference
+									.findOrCreate(
+											loaderRef,
+											TypeName.string2TypeName("Laverroes/Library"));
+							MethodReference clinitRef = MethodReference
+									.findOrCreate(T,
+											MethodReference.clinitName,
+											MethodReference.clinitSelector
+													.getDescriptor());
 							return new DefaultEntrypoint(clinitRef, cha);
 						} else {
-							throw new IllegalStateException("No more entry points. This should never happen!");
+							throw new IllegalStateException(
+									"No more entry points. This should never happen!");
 						}
 					}
 				};
@@ -350,11 +413,13 @@ public class CallGraphFactory {
 	}
 
 	@SuppressWarnings("unused")
-	private static void dumpCG(ClassLoaderReference loaderRef, PointerAnalysis<InstanceKey> PA,
+	private static void dumpCG(ClassLoaderReference loaderRef,
+			PointerAnalysis<InstanceKey> PA,
 			com.ibm.wala.ipa.callgraph.CallGraph CG) {
-		TypeReference T = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName("Lorg/hsqldb/Table"));
-		MethodReference M = MethodReference
-				.findOrCreate(T, "deleteNoCheck", "(Lorg/hsqldb/Session;Lorg/hsqldb/Row;Z)V");
+		TypeReference T = TypeReference.findOrCreate(loaderRef,
+				TypeName.string2TypeName("Lorg/hsqldb/Table"));
+		MethodReference M = MethodReference.findOrCreate(T, "deleteNoCheck",
+				"(Lorg/hsqldb/Session;Lorg/hsqldb/Row;Z)V");
 		CGNode N = CG.getNodes(M).iterator().next();
 		System.err.print("callees of node " + getShortName(N) + " : [");
 		boolean fst = true;
@@ -366,7 +431,8 @@ public class CallGraphFactory {
 			System.err.print(getShortName(ns.next()));
 		}
 		System.err.println("]");
-		System.err.println("\nIR of node " + N.getGraphNodeId() + ", context " + N.getContext());
+		System.err.println("\nIR of node " + N.getGraphNodeId() + ", context "
+				+ N.getContext());
 		IR ir = N.getIR();
 		if (ir != null) {
 			System.err.println(ir);
@@ -375,13 +441,17 @@ public class CallGraphFactory {
 		}
 
 		System.err.println("pointer analysis");
-		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 19) + " -->");
-		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 19)).forEach(
-				p -> System.out.println(p + " :: " + p.getClass()));
-		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 20) + " -->");
-		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 20)).forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 19)
+				+ " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 19))
+				.forEach(p -> System.out.println(p + " :: " + p.getClass()));
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N, 20)
+				+ " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N, 20))
+				.forEach(System.out::println);
 
-		TypeReference T2 = TypeReference.findOrCreate(loaderRef, TypeName.string2TypeName("Laverroes/Library"));
+		TypeReference T2 = TypeReference.findOrCreate(loaderRef,
+				TypeName.string2TypeName("Laverroes/Library"));
 		MethodReference M2 = MethodReference.findOrCreate(T2, "doItAll", "()V");
 		CGNode N2 = CG.getNodes(M2).iterator().next();
 		System.err.print("callees of node " + getShortName(N2) + " : [");
@@ -394,7 +464,8 @@ public class CallGraphFactory {
 			System.err.print(getShortName(ns.next()));
 		}
 		System.err.println("]");
-		System.err.println("\nIR of node " + N2.getGraphNodeId() + ", context " + N2.getContext());
+		System.err.println("\nIR of node " + N2.getGraphNodeId() + ", context "
+				+ N2.getContext());
 		ir = N2.getIR();
 		if (ir != null) {
 			System.err.println(ir);
@@ -403,12 +474,18 @@ public class CallGraphFactory {
 		}
 
 		System.err.println("pointer analysis");
-		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1870) + " -->");
-		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1870)).forEach(System.out::println);
-		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1871) + " -->");
-		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1871)).forEach(System.out::println);
-		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 613) + " -->");
-		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 613)).forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1870)
+				+ " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1870))
+				.forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 1871)
+				+ " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 1871))
+				.forEach(System.out::println);
+		System.err.println(PA.getHeapModel().getPointerKeyForLocal(N2, 613)
+				+ " -->");
+		PA.getPointsToSet(PA.getHeapModel().getPointerKeyForLocal(N2, 613))
+				.forEach(System.out::println);
 	}
 
 	private static String getShortName(CGNode nd) {
@@ -426,8 +503,10 @@ public class CallGraphFactory {
 				if (result.equals("LFunction")) {
 					String s = method.toString();
 					if (s.indexOf('(') != -1) {
-						String functionName = s.substring(s.indexOf('(') + 1, s.indexOf(')'));
-						functionName = functionName.substring(functionName.lastIndexOf('/') + 1);
+						String functionName = s.substring(s.indexOf('(') + 1,
+								s.indexOf(')'));
+						functionName = functionName.substring(functionName
+								.lastIndexOf('/') + 1);
 						result += " " + functionName;
 					}
 				}
