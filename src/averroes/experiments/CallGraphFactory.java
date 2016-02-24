@@ -204,7 +204,7 @@ public class CallGraphFactory {
 		OfflineDynamicCallGraph.main(new String[] {
 				Files.applicationJarFile(base, benchmark).getPath(), "-o",
 				ExperimentsOptions.getInstrumentedJarLocation(),
-				"--patch-calls" });
+				"--patch-calls", "--rt-jar", "/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar"  });
 		Assertions.productionAssertion(
 				new File(ExperimentsOptions.getInstrumentedJarLocation())
 						.exists(), "expected to create instrumented.jar");
@@ -226,12 +226,13 @@ public class CallGraphFactory {
 			String exclusionsFile) throws IOException, WalaException,
 			InterruptedException {
 		ArrayList<String> cmd = new ArrayList<String>(Arrays.asList(
-				"java",
+				"/usr/lib/jvm/java-7-oracle/jre/bin/java",
 				"-cp",
 				composeClasspath(base, benchmark),
 				"-DdynamicCGFile="
 						+ ExperimentsOptions
 								.getDynamicCallGraphReportLocation()));
+		System.setProperty("java.home", "/usr/lib/jvm/java-7-oracle");
 		System.setProperty("dynamicCGFile",
 				ExperimentsOptions.getDynamicCallGraphReportLocation());
 
