@@ -197,6 +197,8 @@ public class ProbeUtils {
 					dynamicEdgesFile.reset();
 				}
 				
+			} else if (line.startsWith("return from ")){
+				// ignore such lines
 			} else { // a normal edge
 				String callerSubSig = edge.nextToken();
 				String calleeClass = edge.nextToken().replaceAll("/", ".");
