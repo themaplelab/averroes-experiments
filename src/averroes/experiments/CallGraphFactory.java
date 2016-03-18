@@ -201,10 +201,13 @@ public class CallGraphFactory {
 			throws ClassNotFoundException, IOException,
 			InvalidClassFileException, FailureException {
 		System.out.println("Instrumenting appJar ...");
+		String rt = "/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar";
+//		String rt = "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/jre/lib/rt.jar";
+		
 		OfflineDynamicCallGraph.main(new String[] {
 				Files.applicationJarFile(base, benchmark).getPath(), "-o",
 				ExperimentsOptions.getInstrumentedJarLocation(),
-				"--patch-calls", "--rt-jar", "/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar"  });
+				"--patch-calls", "--rt-jar", rt  });
 		Assertions.productionAssertion(
 				new File(ExperimentsOptions.getInstrumentedJarLocation())
 						.exists(), "expected to create instrumented.jar");
@@ -225,14 +228,18 @@ public class CallGraphFactory {
 	private static void exec(String base, String benchmark,
 			String exclusionsFile) throws IOException, WalaException,
 			InterruptedException {
+		String java = "/usr/lib/jvm/java-7-oracle/jre/bin/java";
+//		String java = "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home/jre/bin/java";
+//		String java = "java";
 		ArrayList<String> cmd = new ArrayList<String>(Arrays.asList(
-				"/usr/lib/jvm/java-7-oracle/jre/bin/java",
+				java,
 				"-cp",
 				composeClasspath(base, benchmark),
 				"-DdynamicCGFile="
 						+ ExperimentsOptions
 								.getDynamicCallGraphReportLocation()));
 		System.setProperty("java.home", "/usr/lib/jvm/java-7-oracle");
+//		System.setProperty("java.home", "/Library/Java/JavaVirtualMachines/jdk1.7.0_80.jdk/Contents/Home");
 		System.setProperty("dynamicCGFile",
 				ExperimentsOptions.getDynamicCallGraphReportLocation());
 

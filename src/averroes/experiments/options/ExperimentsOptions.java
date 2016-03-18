@@ -96,7 +96,7 @@ public final class ExperimentsOptions {
 	 * @return
 	 */
 	public static String getInstrumentedJarLocation() {
-		return instrumentedJarLocation;
+		return new File(getOutputDirectory(), instrumentedJarLocation).getPath();
 	}
 
 	/**
@@ -105,7 +105,7 @@ public final class ExperimentsOptions {
 	 * @return
 	 */
 	public static String getDynamicCallGraphReportLocation() {
-		return dynamicCallGraphReportLocation;
+		return new File(getOutputDirectory(), dynamicCallGraphReportLocation).getPath();
 	}
 
 	/**

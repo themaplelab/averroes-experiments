@@ -190,7 +190,7 @@ public class ProbeUtils {
 					// generate edge to library blob
 					line = line.replace("call to ", "");
 					StringTokenizer cs = new StringTokenizer(line, "\t");
-					String cls = cs.nextToken();
+					String cls = cs.nextToken().replaceAll("/", ".");;
 					String subSig = cs.nextToken();
 					probecg.edges().add(new CallEdge(probeMethod(cls, subSig), LIBRARY_BLOB));
 				} else {
