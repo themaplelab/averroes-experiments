@@ -7,7 +7,7 @@
 		<delete file="conv.jar" />
 		<jar destfile="conv.jar">
 			<manifest>
-				<attribute name="Main-Class" value="averroes.experiments.stats.CallGraphConverter" />
+				<attribute name="Main-Class" value="averroes.experiments.CallGraphConverter" />
 				<attribute name="Class-Path" value="." />
 			</manifest>
 			<fileset dir="../bin/" />
@@ -15,6 +15,8 @@
 			<zipgroupfileset file="${basedir}/../../probe/jar/probe.jar"/>
 			<zipgroupfileset file="../lib/scala-library_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
 			<zipgroupfileset file="../lib/scala-reflect_2.11.6.jar" excludes="META-INF/*.SF,META-INF/*.DSA,META-INF/*.RSA" />
+			<zipgroupfileset dir="${basedir}/../lib" includes="commons-cli-1.3.1.jar" />
+			<zipgroupfileset dir="${basedir}/../lib" includes="commons-io-2.4.jar" />
 		</jar>
 	</target>
 </project>

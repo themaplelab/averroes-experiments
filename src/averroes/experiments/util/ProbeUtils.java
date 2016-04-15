@@ -193,6 +193,10 @@ public class ProbeUtils {
 					String cls = cs.nextToken().replaceAll("/", ".");;
 					String subSig = cs.nextToken();
 					probecg.edges().add(new CallEdge(probeMethod(cls, subSig), LIBRARY_BLOB));
+					
+					if(cls.equals("org.apache.lucene.analysis.standard.Token") && subSig.equals("newToken(I)")){
+						System.out.println("implicit call to library");
+					}
 				} else {
 					dynamicEdgesFile.reset();
 				}
@@ -253,6 +257,9 @@ public class ProbeUtils {
 					result.edges().add(edge);
 				} else if (isSrcApp && !isDstApp) {
 					result.edges().add(new CallEdge(src, LIBRARY_BLOB));
+//					if(src.cls().toString().equals("org.apache.lucene.analysis.standard.Token") && src.name().equals("newToken")) {
+//						System.out.println("while collapsing " + src + " :: " + dst);
+//					}
 				} else if (!isSrcApp && isDstApp) {
 					result.edges().add(new CallEdge(LIBRARY_BLOB, dst));
 				}
