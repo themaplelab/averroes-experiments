@@ -189,13 +189,26 @@ public class ProbeUtils {
 				if(next != null && next.startsWith("return from ")) {
 					// generate edge to library blob
 					line = line.replace("call to ", "");
-					StringTokenizer cs = new StringTokenizer(line, "\t");
-					String cls = cs.nextToken().replaceAll("/", ".");;
-					String subSig = cs.nextToken();
-					probecg.edges().add(new CallEdge(probeMethod(cls, subSig), LIBRARY_BLOB));
+					StringTokenizer callToLine = new StringTokenizer(line, "\t");
+					String callToClass = callToLine.nextToken().replaceAll("/", ".");;
+					String callToSubSig = callToLine.nextToken();
 					
-					if(cls.equals("org.apache.lucene.analysis.standard.Token") && subSig.equals("newToken(I)")){
-						System.out.println("implicit call to library");
+					next = next.replace("return from ", "");
+					StringTokenizer returnFromLine = new StringTokenizer(next, "\t");
+					String returnFromClass = returnFromLine.nextToken().replaceAll("/", ".");;
+					String returnFromSubSig = returnFromLine.nextToken();
+					
+					// we should check that the caller/callee pair in "return from" matches that of "call to"
+					if(callToClass.equals(returnFromClass) && callToSubSig.equals(returnFromSubSig)) {
+						ProbeMethod src = probeMethod(callToClass, callToSubSig);
+						probecg.edges().add(new CallEdge(src, LIBRARY_BLOB));
+						
+//						if (src.cls().toString().equals("org.apache.lucene.analysis.standard.Token")
+//								&& src.name().equals("newToken")) {
+//							System.out.println("implicit call to library");
+//							System.out.println(line);
+//							System.out.println(next);
+//						}
 					}
 				} else {
 					dynamicEdgesFile.reset();
@@ -257,9 +270,6 @@ public class ProbeUtils {
 					result.edges().add(edge);
 				} else if (isSrcApp && !isDstApp) {
 					result.edges().add(new CallEdge(src, LIBRARY_BLOB));
-//					if(src.cls().toString().equals("org.apache.lucene.analysis.standard.Token") && src.name().equals("newToken")) {
-//						System.out.println("while collapsing " + src + " :: " + dst);
-//					}
 				} else if (!isSrcApp && isDstApp) {
 					result.edges().add(new CallEdge(LIBRARY_BLOB, dst));
 				}
