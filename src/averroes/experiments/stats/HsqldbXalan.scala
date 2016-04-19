@@ -10,7 +10,7 @@ import probe.TextReader
 
 object HsqldbXalan {
 
-  val base = "all-output/1/callgraphs"
+  val base = "all-output-1.6/1/callgraphs"
 
   final val tools = List("spark-averroes", "doop-averroes", "wala-averroes")
 
@@ -21,13 +21,13 @@ object HsqldbXalan {
     println("=" * title.length)
 
     tools.foreach { tool =>
-      val dyn = collapse(new TextReader().readCallGraph(s"$base/$title/dynamic.txt.gzip"), pkgs).edges filter l2aFilter
-      val ave = collapse(new TextReader().readCallGraph(s"$base/$title/$tool.txt.gzip"), pkgs).edges filter l2aFilter
-      val van = collapse(new TextReader().readCallGraph(s"$base/$title/${tool.replace("-averroes", "")}.txt.gzip"), pkgs).edges filter l2aFilter
+      val dyn = new TextReader().readCallGraph(s"$base/$title/dynamic.txt.gzip").edges filter l2aFilter
+      val ave = new TextReader().readCallGraph(s"$base/$title/$tool.txt.gzip").edges filter l2aFilter
+      val van = new TextReader().readCallGraph(s"$base/$title/${tool.replace("-averroes", "")}.txt.gzip").edges filter l2aFilter
       val svan = dyn union van
       val diff = ave diff svan
 
-      val precision = diff.size
+      val precision = diff.count { e =>  pkgs.exists(e.dst.cls.pkg.startsWith) }
       println(tool + " :: " + precision)
     }
   }
@@ -57,6 +57,7 @@ object HsqldbXalan {
   def main(args: Array[String]) = {
     // Precision
     emit("dacapo/hsqldb", List[String]("org.hsqldb.jdbc"))
-    emit("dacapo/xalan", List[String]("org.apache.xalan", "org.apache.xml"))
+    emit("dacapo/xalan", List[String]("org.apache.xalan"))
+    emit("dacapo/xalan", List[String]("org.apache.xml"))
   }
 }
