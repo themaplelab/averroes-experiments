@@ -1,15 +1,10 @@
 /bin/
-/benchmarks/
-/benchmarks-averroes/
 /dumps/
-/hello/
-/jre/
-/properties/
 /output/
 /.cache
 /.cache-main
 /.DS_Store
-/dumps/
 /cg.txt
 /instrumented.jar
 /report
+/benchmarks-averroes
